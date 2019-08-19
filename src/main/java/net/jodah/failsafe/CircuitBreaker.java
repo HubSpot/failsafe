@@ -238,6 +238,33 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
   }
 
   /**
+   * Calls the {@code runnable} when the circuit is closed.
+   * <p>Note: Any exceptions that are thrown from within the {@code runnable} are ignored.</p>
+   */
+  /* Alias for dealing with runtime error on binary incompatibility change of the onClose signature by manually swapping off the affected method name during the migration */
+  public void onCloseMigration(CheckedRunnable runnable) {
+    onClose = runnable;
+  }
+
+  /**
+   * Calls the {@code runnable} when the circuit is half-opened.
+   * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
+   */
+  /* Alias for dealing with runtime error on binary incompatibility change of the onHalfOpen signature by manually swapping off the affected method name during the migration */
+  public void onHalfOpenMigration(CheckedRunnable runnable) {
+    onHalfOpen = runnable;
+  }
+
+  /**
+   * Calls the {@code runnable} when the circuit is opened.
+   * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
+   */
+  /* Alias for dealing with runtime error on binary incompatibility change of the onOpen signature by manually swapping off the affected method name during the migration */
+  public void onOpenMigration(CheckedRunnable runnable) {
+    onOpen = runnable;
+  }
+
+  /**
    * Opens the circuit.
    */
   public void open() {
