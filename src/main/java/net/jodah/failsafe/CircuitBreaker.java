@@ -15,15 +15,20 @@
  */
 package net.jodah.failsafe;
 
-import net.jodah.failsafe.function.CheckedRunnable;
-import net.jodah.failsafe.internal.*;
-import net.jodah.failsafe.internal.util.Assert;
-import net.jodah.failsafe.util.Ratio;
-
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import net.jodah.failsafe.function.CheckedRunnable;
+import net.jodah.failsafe.internal.CircuitBreakerInternals;
+import net.jodah.failsafe.internal.CircuitState;
+import net.jodah.failsafe.internal.ClosedState;
+import net.jodah.failsafe.internal.HalfOpenState;
+import net.jodah.failsafe.internal.OpenState;
+import net.jodah.failsafe.internal.util.Assert;
+import net.jodah.failsafe.util.Ratio;
 
 /**
  * A circuit breaker that temporarily halts execution when configurable thresholds are exceeded.
@@ -209,27 +214,54 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
    * Calls the {@code runnable} when the circuit is closed.
    * <p>Note: Any exceptions that are thrown from within the {@code runnable} are ignored.</p>
    */
-  public CircuitBreaker<R> onClose(CheckedRunnable runnable) {
+  /* Return type altered to support runtime compatability of signature bytecode with 1.X failsafe */
+  public void onClose(CheckedRunnable runnable) {
     onClose = runnable;
-    return this;
   }
 
   /**
    * Calls the {@code runnable} when the circuit is half-opened.
    * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
    */
-  public CircuitBreaker<R> onHalfOpen(CheckedRunnable runnable) {
+  /* Return type altered to support runtime compatability of signature bytecode with 1.X failsafe */
+  public void onHalfOpen(CheckedRunnable runnable) {
     onHalfOpen = runnable;
-    return this;
   }
 
   /**
    * Calls the {@code runnable} when the circuit is opened.
    * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
    */
-  public CircuitBreaker<R> onOpen(CheckedRunnable runnable) {
+  /* Return type altered to support runtime compatability of signature bytecode with 1.X failsafe */
+  public void onOpen(CheckedRunnable runnable) {
     onOpen = runnable;
-    return this;
+  }
+
+  /**
+   * Calls the {@code runnable} when the circuit is closed.
+   * <p>Note: Any exceptions that are thrown from within the {@code runnable} are ignored.</p>
+   */
+  /* Alias for dealing with runtime error on binary incompatibility change of the onClose signature by manually swapping off the affected method name during the migration */
+  public void onCloseMigration(CheckedRunnable runnable) {
+    onClose = runnable;
+  }
+
+  /**
+   * Calls the {@code runnable} when the circuit is half-opened.
+   * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
+   */
+  /* Alias for dealing with runtime error on binary incompatibility change of the onHalfOpen signature by manually swapping off the affected method name during the migration */
+  public void onHalfOpenMigration(CheckedRunnable runnable) {
+    onHalfOpen = runnable;
+  }
+
+  /**
+   * Calls the {@code runnable} when the circuit is opened.
+   * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
+   */
+  /* Alias for dealing with runtime error on binary incompatibility change of the onOpen signature by manually swapping off the affected method name during the migration */
+  public void onOpenMigration(CheckedRunnable runnable) {
+    onOpen = runnable;
   }
 
   /**
@@ -303,6 +335,12 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
     return this;
   }
 
+  /* Backwards compatability for 1.x -> 2.x migration */
+  @Deprecated
+  public CircuitBreaker withDelay(long delay, TimeUnit timeUnit) {
+    return withDelay(Duration.of(delay, TimeUnitToChronoUnit.toChronoUnit(timeUnit)));
+  }
+
   /**
    * Sets the number of successive failures that must occur when in a closed state in order to open the circuit.
    * <p>
@@ -372,19 +410,24 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
     return this;
   }
 
-  /**
-   * Sets the {@code timeout} for executions. Executions that exceed this timeout are not interrupted, but are recorded
-   * as failures once they naturally complete.
-   *
-   * @deprecated Use {@link Timeout} instead
-   * @throws NullPointerException if {@code timeout} is null
-   * @throws IllegalArgumentException if {@code timeout} <= 0
-   */
-  public CircuitBreaker<R> withTimeout(Duration timeout) {
+  public CircuitBreaker withTimeout(Duration timeout) {
     Assert.notNull(timeout, "timeout");
     Assert.isTrue(timeout.toNanos() > 0, "timeout must be greater than 0");
     this.timeout = timeout;
     return this;
+  }
+
+  /**
+   * Sets the {@code timeout} for executions. Executions that exceed this timeout are not interrupted, but are recorded
+   * as failures once they naturally complete.
+   *
+   * @throws NullPointerException if {@code timeUnit} is null
+   * @throws IllegalArgumentException if {@code timeout} <= 0
+   */
+  /* Backwards compatability for 1.x -> 2.x migration */
+  @Deprecated
+  public CircuitBreaker withTimeout(long timeout, TimeUnit timeUnit) {
+    return withTimeout(Duration.of(timeout, TimeUnitToChronoUnit.toChronoUnit(timeUnit)));
   }
 
   void recordResult(R result, Throwable failure) {
