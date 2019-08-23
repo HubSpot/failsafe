@@ -19,4 +19,5 @@ package net.jodah.failsafe.function;
 @Deprecated
 public interface BiPredicate<T, U> {
   boolean test(T t, U u);
+  void dontAllowLambdaShorthand();
 }

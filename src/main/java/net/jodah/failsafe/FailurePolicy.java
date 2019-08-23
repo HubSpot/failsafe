@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import net.jodah.failsafe.function.Predicates;
 import net.jodah.failsafe.internal.util.Assert;
 
 /**
@@ -119,24 +120,14 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public <T extends Throwable> S failIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
-    return handleIf(new Predicate<T>() {
-      @Override
-      public boolean test(T t) {
-        return failurePredicate.test(t);
-      }
-    });
+  public S failIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
+    return handleIf(Predicates.convertToPredicate(failurePredicate));
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public <T extends Throwable> S retryIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
-    return handleIf(new Predicate<T>() {
-      @Override
-      public boolean test(T t) {
-        return failurePredicate.test(t);
-      }
-    });
+  public S retryIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
+    return handleIf(Predicates.convertToPredicate(failurePredicate));
   }
 
   /**
@@ -154,13 +145,8 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public <T extends Throwable> S failIf(net.jodah.failsafe.function.BiPredicate<R, T> resultPredicate) {
-    return handleIf(new BiPredicate<R, T>() {
-      @Override
-      public boolean test(R r, T throwable) {
-        return resultPredicate.test(r, throwable);
-      }
-    });
+  public S failIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> resultPredicate) {
+    return handleIf(Predicates.convertToJavaBiPredicate(resultPredicate));
   }
 
   /**

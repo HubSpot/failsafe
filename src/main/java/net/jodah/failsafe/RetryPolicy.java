@@ -18,6 +18,7 @@ package net.jodah.failsafe;
 import net.jodah.failsafe.event.ExecutionAttemptedEvent;
 import net.jodah.failsafe.event.ExecutionCompletedEvent;
 import net.jodah.failsafe.function.CheckedConsumer;
+import net.jodah.failsafe.function.Predicates;
 import net.jodah.failsafe.internal.EventListener;
 import net.jodah.failsafe.internal.util.Assert;
 
@@ -118,13 +119,8 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   // For migration from 1.x to 2.x
   @Deprecated
-  public <T extends Throwable> RetryPolicy<R> abortIf(net.jodah.failsafe.function.BiPredicate<R, T> completionPredicate) {
-    return abortIf(new BiPredicate<R, T>() {
-      @Override
-      public boolean test(R r, T t) {
-        return completionPredicate.test(r, t);
-      }
-    });
+  public RetryPolicy<R> abortIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> completionPredicate) {
+    return abortIf(Predicates.convertToJavaBiPredicate(completionPredicate));
   }
 
   /**
@@ -142,9 +138,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
   // For migration from 1.x to 2.x
   @Deprecated
   public RetryPolicy<R> abortIf(net.jodah.failsafe.function.Predicate<R> resultPredicate) {
-    Assert.notNull(resultPredicate, "resultPredicate");
-    abortConditions.add(resultPredicateFor(resultPredicate::test));
-    return this;
+    return abortIf(Predicates.convertToPredicate(resultPredicate));
   }
 
   /**
