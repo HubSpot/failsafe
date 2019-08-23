@@ -119,14 +119,24 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public S failIf(Predicate<? extends Throwable> failurePredicate) {
-    return handleIf(failurePredicate);
+  public <T extends Throwable> S failIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return handleIf(new Predicate<T>() {
+      @Override
+      public boolean test(T t) {
+        return failurePredicate.test(t);
+      }
+    });
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public S retryIf(Predicate<? extends Throwable> failurePredicate) {
-    return handleIf(failurePredicate);
+  public <T extends Throwable> S retryIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return handleIf(new Predicate<T>() {
+      @Override
+      public boolean test(T t) {
+        return failurePredicate.test(t);
+      }
+    });
   }
 
   /**
@@ -144,8 +154,13 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public S failIf(BiPredicate<R, ? extends Throwable> resultPredicate) {
-    return handleIf(resultPredicate);
+  public <T extends Throwable> S failIf(net.jodah.failsafe.function.BiPredicate<R, T> resultPredicate) {
+    return handleIf(new BiPredicate<R, T>() {
+      @Override
+      public boolean test(R r, T throwable) {
+        return resultPredicate.test(r, throwable);
+      }
+    });
   }
 
   /**

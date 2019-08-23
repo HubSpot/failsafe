@@ -116,6 +116,17 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     return this;
   }
 
+  // For migration from 1.x to 2.x
+  @Deprecated
+  public <T extends Throwable> RetryPolicy<R> abortIf(net.jodah.failsafe.function.BiPredicate<R, T> completionPredicate) {
+    return abortIf(new BiPredicate<R, T>() {
+      @Override
+      public boolean test(R r, T t) {
+        return completionPredicate.test(r, t);
+      }
+    });
+  }
+
   /**
    * Specifies that retries should be aborted if the {@code resultPredicate} matches the result. Predicate is not
    * invoked when the operation fails.
@@ -125,6 +136,14 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
   public RetryPolicy<R> abortIf(Predicate<R> resultPredicate) {
     Assert.notNull(resultPredicate, "resultPredicate");
     abortConditions.add(resultPredicateFor(resultPredicate));
+    return this;
+  }
+
+  // For migration from 1.x to 2.x
+  @Deprecated
+  public RetryPolicy<R> abortIf(net.jodah.failsafe.function.Predicate<R> resultPredicate) {
+    Assert.notNull(resultPredicate, "resultPredicate");
+    abortConditions.add(resultPredicateFor(resultPredicate::test));
     return this;
   }
 
@@ -177,6 +196,17 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     Assert.notNull(failurePredicate, "failurePredicate");
     abortConditions.add(failurePredicateFor(failurePredicate));
     return this;
+  }
+
+  // For migration from 1.x to 2.x
+  @Deprecated
+  public <T extends Throwable> RetryPolicy<R> abortOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return abortOn(new Predicate<T>() {
+      @Override
+      public boolean test(T t) {
+        return failurePredicate.test(t);
+      }
+    });
   }
 
   /**
