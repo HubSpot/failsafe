@@ -20,4 +20,7 @@ package net.jodah.failsafe.function;
 public interface BiPredicate<T, U> {
   boolean test(T t, U u);
   void dontAllowLambdaShorthand();
+  default java.util.function.BiPredicate<T, U> toJavaUtil() {
+    return this::test;
+  }
 }

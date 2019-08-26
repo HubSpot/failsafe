@@ -5,4 +5,7 @@ package net.jodah.failsafe.function;
 public interface Predicate<T> {
   boolean test(T t);
   void dontAllowLambdaShorthand();
+  default java.util.function.Predicate<T> toJavaUtil() {
+    return this::test;
+  }
 }

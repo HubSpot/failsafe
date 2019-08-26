@@ -18,7 +18,6 @@ package net.jodah.failsafe;
 import net.jodah.failsafe.event.ExecutionAttemptedEvent;
 import net.jodah.failsafe.event.ExecutionCompletedEvent;
 import net.jodah.failsafe.function.CheckedConsumer;
-import net.jodah.failsafe.function.Predicates;
 import net.jodah.failsafe.internal.EventListener;
 import net.jodah.failsafe.internal.util.Assert;
 
@@ -105,6 +104,24 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     this.successListener = rp.successListener;
   }
 
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
+  @Deprecated
+  public RetryPolicy<R> retryOn(Class<? extends Throwable> failure) {
+    return handle(failure);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
+  @Deprecated
+  public final RetryPolicy<R> retryOn(Class<? extends Throwable>... failures) {
+    return handle(failures);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public RetryPolicy<R> retryIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
+
   /**
    * Specifies that retries should be aborted if the {@code completionPredicate} matches the completion result.
    *
@@ -120,7 +137,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
   // For migration from 1.x to 2.x
   @Deprecated
   public RetryPolicy<R> abortIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> completionPredicate) {
-    return abortIf(Predicates.convertToJavaBiPredicate(completionPredicate));
+    return abortIf(completionPredicate.toJavaUtil());
   }
 
   /**
@@ -138,7 +155,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
   // For migration from 1.x to 2.x
   @Deprecated
   public RetryPolicy<R> abortIf(net.jodah.failsafe.function.Predicate<R> resultPredicate) {
-    return abortIf(Predicates.convertToPredicate(resultPredicate));
+    return abortIf(resultPredicate.toJavaUtil());
   }
 
   /**
@@ -195,12 +212,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
   // For migration from 1.x to 2.x
   @Deprecated
   public <T extends Throwable> RetryPolicy<R> abortOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
-    return abortOn(new Predicate<T>() {
-      @Override
-      public boolean test(T t) {
-        return failurePredicate.test(t);
-      }
-    });
+    return abortOn(failurePredicate.toJavaUtil());
   }
 
   /**

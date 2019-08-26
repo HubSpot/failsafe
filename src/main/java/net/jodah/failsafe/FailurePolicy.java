@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import net.jodah.failsafe.function.Predicates;
 import net.jodah.failsafe.internal.util.Assert;
 
 /**
@@ -55,18 +54,6 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
     return handle(Arrays.asList(failure));
   }
 
-  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
-  @Deprecated
-  public S failOn(Class<? extends Throwable> failure) {
-    return handle(failure);
-  }
-
-  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
-  @Deprecated
-  public S retryOn(Class<? extends Throwable> failure) {
-    return handle(failure);
-  }
-
   /**
    * Specifies the failures to handle. Any failures that are assignable from the {@code failures} will be handled.
    *
@@ -78,18 +65,6 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
     Assert.notNull(failures, "failures");
     Assert.isTrue(failures.length > 0, "Failures cannot be empty");
     return handle(Arrays.asList(failures));
-  }
-
-  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
-  @Deprecated
-  public final S failOn(Class<? extends Throwable>... failures) {
-    return handle(failures);
-  }
-
-  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
-  @Deprecated
-  public final S retryOn(Class<? extends Throwable>... failures) {
-    return handle(failures);
   }
 
   /**
@@ -118,18 +93,6 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
     return (S) this;
   }
 
-  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
-  @Deprecated
-  public S failIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
-    return handleIf(Predicates.convertToPredicate(failurePredicate));
-  }
-
-  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
-  @Deprecated
-  public S retryIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
-    return handleIf(Predicates.convertToPredicate(failurePredicate));
-  }
-
   /**
    * Specifies that a failure has occurred if the {@code resultPredicate} matches the execution result.
    *
@@ -141,12 +104,6 @@ public abstract class FailurePolicy<S, R> extends PolicyListeners<S, R> implemen
     failuresChecked = true;
     failureConditions.add((BiPredicate<R, Throwable>) resultPredicate);
     return (S) this;
-  }
-
-  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
-  @Deprecated
-  public S failIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> resultPredicate) {
-    return handleIf(Predicates.convertToJavaBiPredicate(resultPredicate));
   }
 
   /**
