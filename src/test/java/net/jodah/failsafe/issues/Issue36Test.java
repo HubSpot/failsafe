@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -47,7 +47,7 @@ public class Issue36Test {
 
   public void test() {
     try {
-      Failsafe.with(retryPolicy
+      Failsafe.withMigration(retryPolicy
           .onFailedAttempt(e -> failedAttempts.incrementAndGet())
           .onRetry(e -> retries.incrementAndGet()))
           .get(() -> {
@@ -74,7 +74,7 @@ public class Issue36Test {
         .handle(Exception.class)
         .withMaxRetries(3);
     AtomicInteger listenerCallbacks = new AtomicInteger();
-    Failsafe.with(policy
+    Failsafe.withMigration(policy
         .onFailedAttempt(e -> listenerCallbacks.incrementAndGet()))
         .get(() -> false);
     assertEquals(listenerCallbacks.get(), 4);
@@ -86,7 +86,7 @@ public class Issue36Test {
         .handle(Exception.class)
         .withMaxRetries(3);
     AtomicInteger listenerCallbacks = new AtomicInteger();
-    Failsafe.with(policy
+    Failsafe.withMigration(policy
         .onRetry(e -> listenerCallbacks.incrementAndGet()))
         .get(() -> false);
     assertEquals(listenerCallbacks.get(), 3);
@@ -98,7 +98,7 @@ public class Issue36Test {
         .handle(Exception.class)
         .withMaxRetries(3);
     AtomicInteger listenerCallbacks = new AtomicInteger();
-    Testing.ignoreExceptions(() -> Failsafe.with(policy
+    Testing.ignoreExceptions(() -> Failsafe.withMigration(policy
           .onFailedAttempt(e -> listenerCallbacks.incrementAndGet()))
           .get(() -> {
             throw new RuntimeException();
@@ -112,7 +112,7 @@ public class Issue36Test {
         .handle(Exception.class)
         .withMaxRetries(3);
     AtomicInteger listenerCallbacks = new AtomicInteger();
-    Testing.ignoreExceptions(() -> Failsafe.with(policy
+    Testing.ignoreExceptions(() -> Failsafe.withMigration(policy
           .onRetry(e -> listenerCallbacks.incrementAndGet()))
           .get(() -> {
             throw new RuntimeException();

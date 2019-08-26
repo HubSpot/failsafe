@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -16,9 +16,9 @@
 package net.jodah.failsafe;
 
 /**
- * Thrown when a synchronous Failsafe execution fails with an exception. Use {@link Throwable#getCause()} to learn the
+ * Thrown when a synchronous Failsafe execution fails withMigration an exception. Use {@link Throwable#getCause()} to learn the
  * cause of the failure.
- * 
+ *
  * @author Jonathan Halterman
  */
 public class FailsafeException extends RuntimeException {

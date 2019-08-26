@@ -23,7 +23,7 @@ public class Issue146Test {
         .onFailure(e -> failureCounter.incrementAndGet())
         .onFailedAttempt(e -> failedAttemptCounter.incrementAndGet())
         .withMaxRetries(2);
-    Failsafe.with(retryPolicy).get(() -> null);
+    Failsafe.withMigration(retryPolicy).get(() -> null);
 
     assertEquals(3, failedAttemptCounter.get());
     assertEquals(0, successCounter.get());

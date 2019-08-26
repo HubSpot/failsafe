@@ -44,7 +44,7 @@ public class FailsafePolicyOrderingTest {
     RetryPolicy<Object> rp = new RetryPolicy<>().withMaxRetries(2);
     CircuitBreaker<Object> cb = new CircuitBreaker<>().withFailureThreshold(5);
     Fallback<Object> fb = Fallback.ofAsync(() -> "test");
-    FailsafeExecutor<Object> failsafe = Failsafe.with(fb, rp, cb).onComplete(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(fb, rp, cb).onComplete(e -> {
       waiter.assertEquals(3, e.getAttemptCount());
       waiter.resume();
     });
@@ -75,7 +75,7 @@ public class FailsafePolicyOrderingTest {
     // Given
     RetryPolicy<Object> rp = new RetryPolicy<>().withMaxRetries(2);
     CircuitBreaker<Object> cb = new CircuitBreaker<>().withFailureThreshold(5);
-    FailsafeExecutor<Object> failsafe = Failsafe.with(cb, rp).onComplete(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(cb, rp).onComplete(e -> {
       waiter.assertEquals(3, e.getAttemptCount());
       waiter.resume();
     });
@@ -105,7 +105,7 @@ public class FailsafePolicyOrderingTest {
     // Given
     CircuitBreaker<Object> cb1 = new CircuitBreaker<>().handle(IllegalStateException.class);
     CircuitBreaker<Object> cb2 = new CircuitBreaker<>().handle(IllegalArgumentException.class);
-    FailsafeExecutor<Object> failsafe = Failsafe.with(cb2, cb1).onComplete(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(cb2, cb1).onComplete(e -> {
       waiter.assertEquals(1, e.getAttemptCount());
       waiter.resume();
     });
@@ -122,7 +122,7 @@ public class FailsafePolicyOrderingTest {
 
     // Given
     cb1.close();
-    failsafe = Failsafe.with(cb1, cb2).onComplete(e -> {
+    failsafe = Failsafe.withMigration(cb1, cb2).onComplete(e -> {
       waiter.assertEquals(1, e.getAttemptCount());
       waiter.resume();
     });
@@ -164,7 +164,7 @@ public class FailsafePolicyOrderingTest {
       .onFailedAttempt(e -> rp2FailedAttempts.incrementAndGet())
       .onFailure(e -> rp2Failures.incrementAndGet());
     Fallback<Object> fallback = Fallback.ofAsync(() -> true);
-    FailsafeExecutor<Object> failsafe = Failsafe.with(fallback, rp2, rp1).onComplete(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(fallback, rp2, rp1).onComplete(e -> {
       waiter.assertEquals(5, e.getAttemptCount());
       waiter.resume();
     });
@@ -197,7 +197,7 @@ public class FailsafePolicyOrderingTest {
     rp1Failures.set(0);
     rp2FailedAttempts.set(0);
     rp2Failures.set(0);
-    failsafe = Failsafe.with(fallback, rp1, rp2).onComplete(e -> {
+    failsafe = Failsafe.withMigration(fallback, rp1, rp2).onComplete(e -> {
       waiter.assertEquals(5, e.getAttemptCount());
       waiter.resume();
     });
@@ -232,7 +232,7 @@ public class FailsafePolicyOrderingTest {
   }
 
   /**
-   * Tests a scenario with nested retry policies where the inner policy is exceeded and skipped.
+   * Tests a scenario withMigration nested retry policies where the inner policy is exceeded and skipped.
    */
   private void assertNestedRetryPoliciesWhereInnerIsExceeded(boolean sync) throws Throwable {
     // Given
@@ -249,7 +249,7 @@ public class FailsafePolicyOrderingTest {
       .withMaxRetries(10)
       .onFailedAttempt(e -> rp2FailedAttempts.incrementAndGet())
       .onFailure(e -> rp2Failures.incrementAndGet());
-    FailsafeExecutor<Object> failsafe = Failsafe.with(rp2, rp1).onComplete(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(rp2, rp1).onComplete(e -> {
       waiter.assertEquals(6, e.getAttemptCount());
       waiter.resume();
     });
@@ -295,7 +295,7 @@ public class FailsafePolicyOrderingTest {
   }
 
   /**
-   * Tests a scenario with a fallback, retry policy and nested timeouts.
+   * Tests a scenario withMigration a fallback, retry policy and nested timeouts.
    */
   private void assertFallbackRetryPolicyAndNestedTimeous(boolean sync) throws Throwable {
     // Given
@@ -305,7 +305,7 @@ public class FailsafePolicyOrderingTest {
     Timeout<Object> timeout1 = Timeout.of(Duration.ofMillis(50)).onFailure(e -> timeout1Failures.incrementAndGet());
     Timeout<Object> timeout2 = Timeout.of(Duration.ofMillis(100)).onFailure(e -> timeout2Failures.incrementAndGet());
     Fallback<Object> fallback = Fallback.of(true);
-    FailsafeExecutor<Object> failsafe = Failsafe.with(fallback, rp, timeout1, timeout2).onComplete(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(fallback, rp, timeout1, timeout2).onComplete(e -> {
       waiter.assertEquals(3, e.getAttemptCount());
       waiter.assertEquals(e.getResult(), true);
       waiter.assertNull(e.getFailure());

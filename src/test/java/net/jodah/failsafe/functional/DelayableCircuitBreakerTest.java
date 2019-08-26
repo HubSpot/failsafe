@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -35,7 +35,7 @@ public class DelayableCircuitBreakerTest {
     });
 
     assertFalse(breaker.isOpen());
-    Failsafe.with(breaker).run((ExecutionContext context) -> {
+    Failsafe.withMigration(breaker).run((ExecutionContext context) -> {
       throw new RuntimeException("try again");
     });
     assertTrue(breaker.isOpen());
@@ -49,7 +49,7 @@ public class DelayableCircuitBreakerTest {
         return Duration.ofNanos(1);
       }, 2);
 
-    FailsafeExecutor<Integer> failsafe = Failsafe.with(breaker);
+    FailsafeExecutor<Integer> failsafe = Failsafe.withMigration(breaker);
     failsafe.get(() -> 0);
     failsafe.get(() -> 1);
     breaker.close();
@@ -67,7 +67,7 @@ public class DelayableCircuitBreakerTest {
       }, RuntimeException.class);
 
     Fallback<Integer> fallback = Fallback.of(0);
-    FailsafeExecutor<Integer> failsafe = Failsafe.with(fallback, breaker);
+    FailsafeExecutor<Integer> failsafe = Failsafe.withMigration(fallback, breaker);
     failsafe.get(() -> 0);
     failsafe.get(() -> {
       throw new Exception();

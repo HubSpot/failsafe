@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -40,7 +40,7 @@ public class DelayableRetryPolicyTest {
       throw new UncheckedExpectedException();
     });
 
-    Failsafe.with(retryPolicy).run((ExecutionContext context) -> {
+    Failsafe.withMigration(retryPolicy).run((ExecutionContext context) -> {
       throw new RuntimeException("try again");
     });
   }
@@ -54,7 +54,7 @@ public class DelayableRetryPolicyTest {
     Fallback<Object> fallback = Fallback.<Object>of(123).handleResultIf(result -> true);
 
     AtomicInteger attempts = new AtomicInteger(0);
-    Object result = Failsafe.with(fallback, retryPolicy).get(() -> {
+    Object result = Failsafe.withMigration(fallback, retryPolicy).get(() -> {
       int i = attempts.getAndIncrement();
       switch (i) {
         case 0:
@@ -81,7 +81,7 @@ public class DelayableRetryPolicyTest {
         }, DelayException.class);
 
     AtomicInteger attempts = new AtomicInteger(0);
-    int result = Failsafe.with(Fallback.of(123), retryPolicy).get(() -> {
+    int result = Failsafe.withMigration(Fallback.of(123), retryPolicy).get(() -> {
       int i = attempts.getAndIncrement();
       switch (i) {
         case 0:

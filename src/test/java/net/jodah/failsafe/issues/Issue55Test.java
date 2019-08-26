@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -32,12 +32,12 @@ public class Issue55Test {
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     AtomicInteger counter = new AtomicInteger();
-    Failsafe.with(Fallback.of(counter::incrementAndGet), new RetryPolicy<>()).with(executor).getAsync(() -> null);
+    Failsafe.withMigration(Fallback.of(counter::incrementAndGet), new RetryPolicy<>()).with(executor).getAsync(() -> null);
 
     Thread.sleep(100);
     assertEquals(counter.get(), 0);
 
-    Failsafe.with(Fallback.of(counter::incrementAndGet), new RetryPolicy<>().withMaxRetries(1))
+    Failsafe.withMigration(Fallback.of(counter::incrementAndGet), new RetryPolicy<>().withMaxRetries(1))
         .with(executor)
         .runAsync(() -> {
           throw new RuntimeException();

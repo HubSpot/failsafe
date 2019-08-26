@@ -10,6 +10,6 @@ import static org.testng.Assert.assertNull;
 public class Issue177Test {
   public void shouldSupportNullFallback() {
     Fallback<Boolean> fallback = Fallback.of((Boolean) null).handleResult(false);
-    assertNull(Failsafe.with(fallback).get(() -> false));
+    assertNull(Failsafe.withMigration(fallback).get(() -> false));
   }
 }

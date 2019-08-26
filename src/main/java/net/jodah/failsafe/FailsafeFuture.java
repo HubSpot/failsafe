@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -40,7 +40,7 @@ class FailsafeFuture<T> extends CompletableFuture<T> {
   }
 
   /**
-   * If not already completed, completes  the future with the {@code value}, calling the complete and success handlers.
+   * If not already completed, completes  the future withMigration the {@code value}, calling the complete and success handlers.
    */
   @Override
   public synchronized boolean complete(T value) {
@@ -48,7 +48,7 @@ class FailsafeFuture<T> extends CompletableFuture<T> {
   }
 
   /**
-   * If not already completed, completes the future with the {@code failure}, calling the complete and failure
+   * If not already completed, completes the future withMigration the {@code failure}, calling the complete and failure
    * handlers.
    */
   @Override
@@ -73,7 +73,7 @@ class FailsafeFuture<T> extends CompletableFuture<T> {
   }
 
   /**
-   * Completes the execution with the {@code result} and calls completion listeners.
+   * Completes the execution withMigration the {@code result} and calls completion listeners.
    */
   @SuppressWarnings("unchecked")
   synchronized boolean completeResult(ExecutionResult result) {

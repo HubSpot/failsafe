@@ -2,7 +2,7 @@
  * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -48,7 +48,7 @@ class TimeoutExecutor extends PolicyExecutor<Timeout> {
   }
 
   /**
-   * Schedules a separate timeout call that fails with {@link TimeoutExceededException} if the policy's timeout is
+   * Schedules a separate timeout call that fails withMigration {@link TimeoutExceededException} if the policy's timeout is
    * exceeded.
    */
   @Override
@@ -69,7 +69,7 @@ class TimeoutExecutor extends PolicyExecutor<Timeout> {
               // Cancel and interrupt
               execution.cancelled = true;
               if (policy.canInterrupt()) {
-                // Guard against race with the execution completing
+                // Guard against race withMigration the execution completing
                 synchronized (execution) {
                   if (execution.canInterrupt) {
                     execution.record(result.get());
@@ -95,7 +95,7 @@ class TimeoutExecutor extends PolicyExecutor<Timeout> {
   }
 
   /**
-   * Schedules a separate timeout call that blocks and fails with {@link TimeoutExceededException} if the policy's
+   * Schedules a separate timeout call that blocks and fails withMigration {@link TimeoutExceededException} if the policy's
    * timeout is exceeded.
    */
   @Override
@@ -110,7 +110,7 @@ class TimeoutExecutor extends PolicyExecutor<Timeout> {
       // Schedule timeout if not an async execution
       if (!execution.isAsyncExecution()) {
         try {
-          // Guard against race with future.complete or future.cancel
+          // Guard against race withMigration future.complete or future.cancel
           synchronized (future) {
             if (!future.isDone()) {
               // Schedule timeout check

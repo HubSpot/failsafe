@@ -7,7 +7,7 @@ import net.jodah.failsafe.internal.util.Assert;
 import java.time.Duration;
 
 /**
- * A policy that fails an excecution with a {@link net.jodah.failsafe.TimeoutExceededException TimeoutExceededException}
+ * A policy that fails an excecution withMigration a {@link net.jodah.failsafe.TimeoutExceededException TimeoutExceededException}
  * if it exceeds a timeout. Uses a separate thread on the configured scheduler or the common pool to perform timeouts
  * checks.
  * <p>
@@ -68,7 +68,7 @@ public class Timeout<R> extends PolicyListeners<Timeout<R>, R> implements Policy
    * Notes:
    * <ul>
    *   <li>
-   * Executions that are cancelled or interrupted after they timeout are still completed with {@link net.jodah.failsafe.TimeoutExceededException TimeoutExceededException}.
+   * Executions that are cancelled or interrupted after they timeout are still completed withMigration {@link net.jodah.failsafe.TimeoutExceededException TimeoutExceededException}.
    *   </li>
    *   <li>
    * Cancellation and interruption are not supported when performing an {@link FailsafeExecutor#getAsyncExecution(AsyncSupplier)
@@ -90,10 +90,10 @@ public class Timeout<R> extends PolicyListeners<Timeout<R>, R> implements Policy
   }
 
   /**
-   * Returns a {@link Timeout} that fails an execution with {@link net.jodah.failsafe.TimeoutExceededException
+   * Returns a {@link Timeout} that fails an execution withMigration {@link net.jodah.failsafe.TimeoutExceededException
    * TimeoutExceededException} if it exceeds the {@code timeout}.
    *
-   * @param timeout the duration after which an execution is failed with {@link net.jodah.failsafe.TimeoutExceededException
+   * @param timeout the duration after which an execution is failed withMigration {@link net.jodah.failsafe.TimeoutExceededException
    * TimeoutExceededException}.
    * @throws NullPointerException If {@code timeout} is null
    * @throws IllegalArgumentException If {@code timeout} is <= 0
