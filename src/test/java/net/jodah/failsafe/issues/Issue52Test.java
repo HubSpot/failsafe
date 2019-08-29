@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -32,7 +32,7 @@ public class Issue52Test {
   @Test(expectedExceptions = CancellationException.class)
   public void shouldCancelExecutionViaFuture() throws Throwable {
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
-    Future<Object> proxyFuture = Failsafe.with(new RetryPolicy<>().withDelay(Duration.ofMillis(10)))
+    Future<Object> proxyFuture = Failsafe.withMigration(new RetryPolicy<>().withDelay(Duration.ofMillis(10)))
         .with(scheduler)
         .getAsync(exec -> {
           throw new IllegalStateException();
@@ -45,7 +45,7 @@ public class Issue52Test {
   public void shouldCancelExecutionViaCompletableFuture() throws Throwable {
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
     AtomicInteger counter = new AtomicInteger();
-    CompletableFuture<String> proxyFuture = Failsafe.with(new RetryPolicy<>().withDelay(Duration.ofMillis(10)))
+    CompletableFuture<String> proxyFuture = Failsafe.withMigration(new RetryPolicy<>().withDelay(Duration.ofMillis(10)))
         .with(scheduler)
         .getStageAsync(exec -> {
           Thread.sleep(100);

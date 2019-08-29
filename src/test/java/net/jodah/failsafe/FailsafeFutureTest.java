@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -31,7 +31,7 @@ public class FailsafeFutureTest {
    */
   public void shouldCallOnCompleteWhenCancelled() throws Throwable {
     Waiter waiter = new Waiter();
-    CompletableFuture<String> future = Failsafe.with(new RetryPolicy<String>()).with(executor).onComplete(e -> {
+    CompletableFuture<String> future = Failsafe.withMigration(new RetryPolicy<String>()).with(executor).onComplete(e -> {
       waiter.assertNull(e.getResult());
       waiter.assertTrue(e.getFailure() instanceof CancellationException);
       waiter.resume();
@@ -59,7 +59,7 @@ public class FailsafeFutureTest {
    */
   public void shouldNotCancelCompletedFuture() throws Throwable {
     // Given
-    CompletableFuture<String> future = Failsafe.with(new RetryPolicy<String>()).with(executor).getAsync(() -> "test");
+    CompletableFuture<String> future = Failsafe.withMigration(new RetryPolicy<String>()).with(executor).getAsync(() -> "test");
 
     // When
     Thread.sleep(200);
@@ -77,7 +77,7 @@ public class FailsafeFutureTest {
    * Asserts that a cancelled future ignores subsequent completion attempts.
    */
   public void shouldNotCompleteCancelledFuture() {
-    CompletableFuture<String> future = Failsafe.with(new RetryPolicy<String>()).with(executor).getAsync(() -> {
+    CompletableFuture<String> future = Failsafe.withMigration(new RetryPolicy<String>()).with(executor).getAsync(() -> {
       Thread.sleep(1000);
       throw new IllegalStateException();
     });

@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -61,7 +61,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenThrow(failures(2, new ConnectException())).thenReturn(true);
 
     // When
-    run(Failsafe.with(retryAlways), runnable);
+    run(Failsafe.withMigration(retryAlways), runnable);
 
     // Then
     verify(service, times(3)).connect();
@@ -72,7 +72,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenThrow(failures(10, new ConnectException()));
 
     // When / Then
-    assertThrows(() -> run(Failsafe.with(retryTwice), runnable), syncThrowables);
+    assertThrows(() -> run(Failsafe.withMigration(retryTwice), runnable), syncThrowables);
     verify(service, times(3)).connect();
   }
 
@@ -92,7 +92,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenThrow(failures(2, new ConnectException())).thenReturn(false, false, true);
     RetryPolicy<Object> retryPolicy = new RetryPolicy<>().withMaxAttempts(10).handleResult(false);
 
-    assertEquals(get(Failsafe.with(retryPolicy), supplier), Boolean.TRUE);
+    assertEquals(get(Failsafe.withMigration(retryPolicy), supplier), Boolean.TRUE);
     verify(service, times(5)).connect();
 
     // Given - Fail three times
@@ -101,7 +101,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenThrow(failures(10, new ConnectException()));
 
     // When / Then
-    assertThrows(() -> get(Failsafe.with(retryTwice), supplier), syncThrowables);
+    assertThrows(() -> get(Failsafe.withMigration(retryTwice), supplier), syncThrowables);
     verify(service, times(3)).connect();
   }
 
@@ -123,8 +123,8 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     RetryPolicy<Object> retryPolicy = new RetryPolicy<>().withMaxAttempts(10).handleResult(false);
 
     // When
-    CompletableFuture.supplyAsync(() -> Failsafe.with(retryPolicy).get(() -> service.connect()))
-      .thenRun(() -> Failsafe.with(retryPolicy).get(() -> service.disconnect()))
+    CompletableFuture.supplyAsync(() -> Failsafe.withMigration(retryPolicy).get(() -> service.connect()))
+      .thenRun(() -> Failsafe.withMigration(retryPolicy).get(() -> service.disconnect()))
       .get();
 
     // Then
@@ -137,7 +137,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
 
     // When / Then
     assertThrows(
-      () -> CompletableFuture.supplyAsync(() -> Failsafe.with(retryTwice).get(() -> service.connect())).get(),
+      () -> CompletableFuture.supplyAsync(() -> Failsafe.withMigration(retryTwice).get(() -> service.connect())).get(),
       futureSyncThrowables);
     verify(service, times(3)).connect();
   }
@@ -152,12 +152,12 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     RetryPolicy retryPolicy = new RetryPolicy<>().handle(ConnectException.class);
 
     // When / Then
-    assertThrows(() -> Failsafe.with(retryPolicy).get(() -> service.connect()), IllegalStateException.class);
+    assertThrows(() -> Failsafe.withMigration(retryPolicy).get(() -> service.connect()), IllegalStateException.class);
     verify(service, times(3)).connect();
   }
 
   /**
-   * Tests a scenario where three timeouts should cause all delegates to be cancelled with interrupts.
+   * Tests a scenario where three timeouts should cause all delegates to be cancelled withMigration interrupts.
    */
   public void shouldCancelNestedTimeoutsWithInterrupt() throws Throwable {
     // Given
@@ -166,7 +166,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     Timeout<Boolean> timeout2 = Timeout.<Boolean>of(Duration.ofMillis(200)).withCancel(true);
 
     // When / Then
-    assertThrows(() -> Failsafe.with(rp, timeout2, timeout1).onComplete(e -> {
+    assertThrows(() -> Failsafe.withMigration(rp, timeout2, timeout1).onComplete(e -> {
       assertNull(e.getResult());
       assertTrue(e.getFailure() instanceof TimeoutExceededException);
     }).get(ctx -> {
@@ -191,7 +191,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     assertTrue(breaker.isClosed());
 
     // When
-    assertThrows(() -> Failsafe.with(breaker, timeout).run(() -> {
+    assertThrows(() -> Failsafe.withMigration(breaker, timeout).run(() -> {
       Thread.sleep(20);
     }), TimeoutExceededException.class);
 
@@ -213,7 +213,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     }).start();
 
     try {
-      Failsafe.with(new RetryPolicy<>().withMaxRetries(0)).run(() -> {
+      Failsafe.withMigration(new RetryPolicy<>().withMaxRetries(0)).run(() -> {
         try {
           Thread.sleep(10000);
         } catch (InterruptedException e) {
@@ -246,7 +246,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     }).start();
 
     try {
-      Failsafe.with(new RetryPolicy<>().withDelay(Duration.ofSeconds(5))).run(() -> {
+      Failsafe.withMigration(new RetryPolicy<>().withDelay(Duration.ofSeconds(5))).run(() -> {
         throw new Exception();
       });
     } catch (Exception e) {
@@ -267,7 +267,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenThrow(failures(20, new ConnectException())).thenReturn(true);
 
     // When
-    assertThrows(() -> Failsafe.with(retryAlways.handle(ConnectException.class), circuit).run(() -> service.connect()),
+    assertThrows(() -> Failsafe.withMigration(retryAlways.handle(ConnectException.class), circuit).run(() -> service.connect()),
       CircuitBreakerOpenException.class);
 
     // Then
@@ -278,7 +278,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     // Given
     CircuitBreaker<Object> breaker = new CircuitBreaker<>().withFailureThreshold(2).withDelay(Duration.ofSeconds(10));
     AtomicInteger counter = new AtomicInteger();
-    CheckedRunnable runnable = () -> Failsafe.with(breaker).run(() -> {
+    CheckedRunnable runnable = () -> Failsafe.withMigration(breaker).run(() -> {
       counter.incrementAndGet();
       throw new Exception();
     });
@@ -299,7 +299,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenReturn(false);
     RetryPolicy<Object> retryPolicy = new RetryPolicy<>().handleResult(false).withMaxDuration(Duration.ofMillis(100));
 
-    assertEquals(Failsafe.with(retryPolicy).onFailure(e -> {
+    assertEquals(Failsafe.withMigration(retryPolicy).onFailure(e -> {
       assertEquals(e.getResult(), Boolean.FALSE);
       assertNull(e.getFailure());
     }).get(() -> {
@@ -310,19 +310,19 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
   }
 
   /**
-   * Tests the handling of a fallback with no conditions.
+   * Tests the handling of a fallback withMigration no conditions.
    */
   public void testCircuitBreakerWithoutConditions() {
     CircuitBreaker<Object> circuitBreaker = new CircuitBreaker<>().withDelay(Duration.ZERO);
 
-    Asserts.assertThrows(() -> Failsafe.with(circuitBreaker).get(() -> {
+    Asserts.assertThrows(() -> Failsafe.withMigration(circuitBreaker).get(() -> {
       throw new IllegalStateException();
     }), IllegalStateException.class);
     assertTrue(circuitBreaker.isOpen());
 
     RetryPolicy<Object> retryPolicy = new RetryPolicy<>().withMaxRetries(5);
     AtomicInteger counter = new AtomicInteger();
-    assertTrue(Failsafe.with(retryPolicy, circuitBreaker).get(() -> {
+    assertTrue(Failsafe.withMigration(retryPolicy, circuitBreaker).get(() -> {
       if (counter.incrementAndGet() < 3)
         throw new ConnectException();
       return true;
@@ -331,37 +331,37 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
   }
 
   /**
-   * Tests the handling of a fallback with no conditions.
+   * Tests the handling of a fallback withMigration no conditions.
    */
   public void testFallbackWithoutConditions() {
     Fallback<Object> fallback = Fallback.of(true);
 
-    assertTrue(Failsafe.with(fallback).get(() -> {
+    assertTrue(Failsafe.withMigration(fallback).get(() -> {
       throw new ConnectException();
     }));
 
     RetryPolicy<Object> retryPolicy = new RetryPolicy<>().withMaxRetries(2);
-    assertTrue(Failsafe.with(fallback, retryPolicy).get(() -> {
+    assertTrue(Failsafe.withMigration(fallback, retryPolicy).get(() -> {
       throw new ConnectException();
     }));
   }
 
   /**
-   * Tests the handling of a fallback with conditions.
+   * Tests the handling of a fallback withMigration conditions.
    */
   public void testFallbackWithConditions() {
     Fallback<Boolean> fallback = Fallback.of(true).handle(ConnectException.class);
-    Asserts.assertThrows(() -> Failsafe.with(fallback).get(() -> {
+    Asserts.assertThrows(() -> Failsafe.withMigration(fallback).get(() -> {
       throw new IllegalStateException();
     }), IllegalStateException.class);
 
-    assertTrue(Failsafe.with(fallback).get(() -> {
+    assertTrue(Failsafe.withMigration(fallback).get(() -> {
       throw new ConnectException();
     }));
   }
 
   public void shouldWrapCheckedExceptions() {
-    assertThrows(() -> Failsafe.with(new RetryPolicy<>().withMaxRetries(1)).run(() -> {
+    assertThrows(() -> Failsafe.withMigration(new RetryPolicy<>().withMaxRetries(1)).run(() -> {
       throw new TimeoutException();
     }), FailsafeException.class, TimeoutException.class);
   }
@@ -378,7 +378,7 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     }).start();
 
     // Then
-    assertThrows(() -> Failsafe.with(retryNever).run(() -> {
+    assertThrows(() -> Failsafe.withMigration(retryNever).run(() -> {
       Thread.sleep(1000);
     }), FailsafeException.class, InterruptedException.class);
     t.interrupt();

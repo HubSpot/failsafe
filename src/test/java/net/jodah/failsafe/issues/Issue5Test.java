@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -36,7 +36,7 @@ public class Issue5Test {
         .handleResult(null);
 
     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    Failsafe.with(retryPolicy).with(executor).onFailure(e -> {
+    Failsafe.withMigration(retryPolicy).with(executor).onFailure(e -> {
       waiter.assertNull(e.getResult());
       waiter.assertNull(e.getFailure());
       waiter.resume();

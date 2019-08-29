@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -58,53 +58,53 @@ public abstract class AbstractFailsafeTest {
   }
 
   /**
-   * Does a failsafe get with an optional executor.
+   * Does a failsafe get withMigration an optional executor.
    */
   <T> T failsafeGet(Policy<T> policy, CheckedSupplier<T> supplier) {
-    return get(Failsafe.with(policy), supplier);
+    return get(Failsafe.withMigration(policy), supplier);
   }
 
   /**
-   * Does a failsafe get with an optional executor.
+   * Does a failsafe get withMigration an optional executor.
    */
   <T> T get(FailsafeExecutor<T> failsafe, CheckedSupplier<T> supplier) {
     return unwrapExceptions(() -> getExecutor() == null ? failsafe.get(supplier) : failsafe.getAsync(supplier).get());
   }
 
   /**
-   * Does a contextual failsafe get with an optional executor.
+   * Does a contextual failsafe get withMigration an optional executor.
    */
   <T> T failsafeGet(Policy<T> policy, ContextualSupplier<T> supplier) {
-    return get(Failsafe.with(policy), supplier);
+    return get(Failsafe.withMigration(policy), supplier);
   }
 
   /**
-   * Does a contextual failsafe get with an optional executor.
+   * Does a contextual failsafe get withMigration an optional executor.
    */
   <T> T get(FailsafeExecutor<T> failsafe, ContextualSupplier<T> supplier) {
     return unwrapExceptions(() -> getExecutor() == null ? failsafe.get(supplier) : failsafe.getAsync(supplier).get());
   }
 
   /**
-   * Does a failsafe get with an optional executor.
+   * Does a failsafe get withMigration an optional executor.
    */
   <T> T failsafeGetWithFallback(Policy<T> policy, CheckedFunction<ExecutionAttemptedEvent<? extends T>, T> fallback,
     CheckedSupplier<T> supplier) {
     ScheduledExecutorService executor = getExecutor();
     return unwrapExceptions(() -> executor == null ?
-      Failsafe.with(Fallback.of(fallback), policy).get(supplier) :
-      Failsafe.with(Fallback.ofAsync(fallback), policy).with(executor).getAsync(supplier).get());
+      Failsafe.withMigration(Fallback.of(fallback), policy).get(supplier) :
+      Failsafe.withMigration(Fallback.ofAsync(fallback), policy).with(executor).getAsync(supplier).get());
   }
 
   /**
-   * Does a failsafe run with an optional executor.
+   * Does a failsafe run withMigration an optional executor.
    */
   void failsafeRun(Policy<?> policy, CheckedRunnable runnable) {
     ScheduledExecutorService executor = getExecutor();
     if (executor == null)
-      Failsafe.with(policy).run(runnable);
+      Failsafe.withMigration(policy).run(runnable);
     else
-      Failsafe.with(policy).with(executor).runAsync(runnable);
+      Failsafe.withMigration(policy).with(executor).runAsync(runnable);
   }
 
   /**
@@ -137,7 +137,7 @@ public abstract class AbstractFailsafeTest {
   public void shouldFallbackOfException() {
     Fallback<Object> fallback = Fallback.ofException(e -> new IllegalStateException(e.getLastFailure()));
 
-    assertThrows(() -> Failsafe.with(fallback).run(() -> {
+    assertThrows(() -> Failsafe.withMigration(fallback).run(() -> {
       throw new Exception();
     }), IllegalStateException.class);
   }
@@ -192,7 +192,7 @@ public abstract class AbstractFailsafeTest {
   }
 
   /**
-   * Asserts that fallback works after a failure with a breaker configured.
+   * Asserts that fallback works after a failure withMigration a breaker configured.
    */
   public void shouldFallbackAfterFailureWithCircuitBreaker() {
     // Given
@@ -247,7 +247,7 @@ public abstract class AbstractFailsafeTest {
     CheckedSupplier supplier = () -> "foo";
 
     // When / Then
-    FailsafeExecutor<Object> failsafe = Failsafe.with(timeout).onSuccess(f -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(timeout).onSuccess(f -> {
       waiter.assertEquals("foo", f.getResult());
       waiter.resume();
     });
@@ -276,7 +276,7 @@ public abstract class AbstractFailsafeTest {
     };
 
     // When / Then
-    FailsafeExecutor<Object> failsafe = Failsafe.with(rp, timeout).onSuccess(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(rp, timeout).onSuccess(e -> {
       waiter.assertEquals(e.getAttemptCount(), 3);
       waiter.assertEquals("foo2", e.getResult());
       waiter.assertNull(e.getFailure());
@@ -304,7 +304,7 @@ public abstract class AbstractFailsafeTest {
     };
 
     // When / Then
-    FailsafeExecutor<Object> failsafe = Failsafe.with(rp, timeout).onSuccess(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(rp, timeout).onSuccess(e -> {
       waiter.assertEquals(e.getAttemptCount(), 3);
       waiter.assertEquals("foo2", e.getResult());
       waiter.assertNull(e.getFailure());
@@ -315,7 +315,7 @@ public abstract class AbstractFailsafeTest {
   }
 
   /**
-   * Times out then is cancelled with interruption 3 times.
+   * Times out then is cancelled withMigration interruption 3 times.
    */
   public void shouldTimeoutAndCancelAndInterrupt() throws Throwable {
     // Given
@@ -337,7 +337,7 @@ public abstract class AbstractFailsafeTest {
     };
 
     // When / Then
-    FailsafeExecutor<Object> failsafe = Failsafe.with(rp, timeout).onFailure(e -> {
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(rp, timeout).onFailure(e -> {
       waiter.assertEquals(e.getAttemptCount(), 3);
       waiter.assertNull(e.getResult());
       waiter.assertTrue(e.getFailure() instanceof TimeoutExceededException);
@@ -363,7 +363,7 @@ public abstract class AbstractFailsafeTest {
     };
 
     // When / Then
-    FailsafeExecutor<Object> failsafe = Failsafe.with(timeout);
+    FailsafeExecutor<Object> failsafe = Failsafe.withMigration(timeout);
     assertThrows(() -> get(failsafe, supplier), TimeoutExceededException.class);
     assertFalse(Thread.currentThread().isInterrupted(), "Interrupt flag should be cleared after Failsafe handling");
   }
@@ -399,7 +399,7 @@ public abstract class AbstractFailsafeTest {
       .withMaxRetries(2);
 
     // When / Then
-    FailsafeExecutor<Boolean> failsafe = Failsafe.with(retryPolicy).onComplete(e -> waiter.resume());
+    FailsafeExecutor<Boolean> failsafe = Failsafe.withMigration(retryPolicy).onComplete(e -> waiter.resume());
     assertThrows(() -> get(failsafe, () -> {
       throw new InternalError();
     }), InternalError.class);
@@ -422,26 +422,26 @@ public abstract class AbstractFailsafeTest {
 
     // onFailedAttempt
     rp = new RetryPolicy<>().onFailedAttempt(attemptedError).handleResult(null).withMaxRetries(0);
-    get(Failsafe.with(rp), noop);
+    get(Failsafe.withMigration(rp), noop);
 
     // RetryPolicy.onRetry
     rp = new RetryPolicy<>().onRetry(attemptedError).handleResult(null).withMaxRetries(1);
-    get(Failsafe.with(rp), noop);
+    get(Failsafe.withMigration(rp), noop);
 
     // RetryPolicy.onAbort
     rp = new RetryPolicy<>().onAbort(completedError).handleResult(null).abortWhen(null);
-    get(Failsafe.with(rp), noop);
+    get(Failsafe.withMigration(rp), noop);
 
     // RetryPolicy.onRetriesExceeded
     rp = new RetryPolicy<>().onRetriesExceeded(completedError).handleResult(null).withMaxRetries(0);
-    get(Failsafe.with(rp), noop);
+    get(Failsafe.withMigration(rp), noop);
 
     // RetryPolicy.onFailure
     rp = new RetryPolicy<>().onFailure(completedError).handleResult(null).withMaxRetries(0);
-    get(Failsafe.with(rp), noop);
+    get(Failsafe.withMigration(rp), noop);
 
     // Failsafe.onComplete
     rp = new RetryPolicy<>().handleResult(null).withMaxRetries(0);
-    get(Failsafe.with(rp).onComplete(completedError), noop);
+    get(Failsafe.withMigration(rp).onComplete(completedError), noop);
   }
 }

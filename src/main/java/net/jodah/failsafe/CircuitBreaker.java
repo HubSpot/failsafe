@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -36,7 +36,7 @@ import net.jodah.failsafe.util.Ratio;
  * A circuit breaker has three states: <i>closed</i>, <i>open</i>, and <i>half-open</i>. When a circuit breaker is in
  * the <i>closed</i> (initial) state, executions are allowed. If a {@link #withFailureThreshold(int) configurable
  * number} of failures occur, the circuit breaker transitions to the <i>open</i> state. In the <i>open</i> state a
- * circuit breaker will fail executions with {@link CircuitBreakerOpenException}. After a {@link #withDelay(Duration)
+ * circuit breaker will fail executions withMigration {@link CircuitBreakerOpenException}. After a {@link #withDelay(Duration)
  * configurable delay}, the circuit breaker will transition to a <i>half-open</i> state. In the
  * <i>half-open</i> state a {@link #withSuccessThreshold(int) configurable number} of trial executions will be allowed,
  * after which the circuit breaker will transition back to <i>closed</i> or <i>open</i> depending on how many were
@@ -214,7 +214,7 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
    * Calls the {@code runnable} when the circuit is closed.
    * <p>Note: Any exceptions that are thrown from within the {@code runnable} are ignored.</p>
    */
-  /* Return type altered to support runtime compatability of signature bytecode with 1.X failsafe */
+  /* Return type altered to support runtime compatability of signature bytecode withMigration 1.X failsafe */
   public void onClose(CheckedRunnable runnable) {
     onClose = runnable;
   }
@@ -223,7 +223,7 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
    * Calls the {@code runnable} when the circuit is half-opened.
    * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
    */
-  /* Return type altered to support runtime compatability of signature bytecode with 1.X failsafe */
+  /* Return type altered to support runtime compatability of signature bytecode withMigration 1.X failsafe */
   public void onHalfOpen(CheckedRunnable runnable) {
     onHalfOpen = runnable;
   }
@@ -232,7 +232,7 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
    * Calls the {@code runnable} when the circuit is opened.
    * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
    */
-  /* Return type altered to support runtime compatability of signature bytecode with 1.X failsafe */
+  /* Return type altered to support runtime compatability of signature bytecode withMigration 1.X failsafe */
   public void onOpen(CheckedRunnable runnable) {
     onOpen = runnable;
   }
@@ -241,7 +241,7 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
    * Calls the {@code runnable} when the circuit is closed.
    * <p>Note: Any exceptions that are thrown from within the {@code runnable} are ignored.</p>
    */
-  /* Alias for dealing with runtime error on binary incompatibility change of the onClose signature by manually swapping off the affected method name during the migration */
+  /* Alias for dealing withMigration runtime error on binary incompatibility change of the onClose signature by manually swapping off the affected method name during the migration */
   public void onCloseMigration(CheckedRunnable runnable) {
     onClose = runnable;
   }
@@ -250,7 +250,7 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
    * Calls the {@code runnable} when the circuit is half-opened.
    * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
    */
-  /* Alias for dealing with runtime error on binary incompatibility change of the onHalfOpen signature by manually swapping off the affected method name during the migration */
+  /* Alias for dealing withMigration runtime error on binary incompatibility change of the onHalfOpen signature by manually swapping off the affected method name during the migration */
   public void onHalfOpenMigration(CheckedRunnable runnable) {
     onHalfOpen = runnable;
   }
@@ -259,9 +259,33 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
    * Calls the {@code runnable} when the circuit is opened.
    * <p>Note: Any exceptions that are thrown within the {@code runnable} are ignored.</p>
    */
-  /* Alias for dealing with runtime error on binary incompatibility change of the onOpen signature by manually swapping off the affected method name during the migration */
+  /* Alias for dealing withMigration runtime error on binary incompatibility change of the onOpen signature by manually swapping off the affected method name during the migration */
   public void onOpenMigration(CheckedRunnable runnable) {
     onOpen = runnable;
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
+  @Deprecated
+  public CircuitBreaker<R> failOn(Class<? extends Throwable> failure) {
+    return handle(failure);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
+  @Deprecated
+  public final CircuitBreaker<R> failOn(Class<? extends Throwable>... failures) {
+    return handle(failures);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public CircuitBreaker<R> failIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public CircuitBreaker<R> failIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> resultPredicate) {
+    return handleIf(resultPredicate.toJavaUtil());
   }
 
   /**

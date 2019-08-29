@@ -16,25 +16,25 @@ public class Issue84Test {
     circuitBreaker.open();
 
     // Synchronous
-    Asserts.assertThrows(() -> Failsafe.with(circuitBreaker).get(() -> true), CircuitBreakerOpenException.class);
+    Asserts.assertThrows(() -> Failsafe.withMigration(circuitBreaker).get(() -> true), CircuitBreakerOpenException.class);
 
-    // Synchronous with fallback
-    assertFalse(Failsafe.with(Fallback.of(false), circuitBreaker).get(() -> true));
+    // Synchronous withMigration fallback
+    assertFalse(Failsafe.withMigration(Fallback.of(false), circuitBreaker).get(() -> true));
 
     // Asynchronous
-    Future<Boolean> future1 = Failsafe.with(circuitBreaker).with(executor).getAsync(() -> true);
+    Future<Boolean> future1 = Failsafe.withMigration(circuitBreaker).with(executor).getAsync(() -> true);
     Asserts.assertThrows(future1::get, ExecutionException.class, CircuitBreakerOpenException.class);
 
-    // Asynchronous with fallback
-    Future<Boolean> future2 = Failsafe.with(Fallback.of(false), circuitBreaker).with(executor).getAsync(() -> true);
+    // Asynchronous withMigration fallback
+    Future<Boolean> future2 = Failsafe.withMigration(Fallback.of(false), circuitBreaker).with(executor).getAsync(() -> true);
     assertFalse(future2.get());
 
     // Future
-    Future<Boolean> future3 = Failsafe.with(circuitBreaker).with(executor).getStageAsync(() -> CompletableFuture.completedFuture(false));
+    Future<Boolean> future3 = Failsafe.withMigration(circuitBreaker).with(executor).getStageAsync(() -> CompletableFuture.completedFuture(false));
     Asserts.assertThrows(future3::get, ExecutionException.class, CircuitBreakerOpenException.class);
 
-    // Future with fallback
-    Future<Boolean> future4 = Failsafe.with(Fallback.of(false), circuitBreaker)
+    // Future withMigration fallback
+    Future<Boolean> future4 = Failsafe.withMigration(Fallback.of(false), circuitBreaker)
         .getStageAsync(() -> CompletableFuture.completedFuture(false));
     assertFalse(future4.get());
   }

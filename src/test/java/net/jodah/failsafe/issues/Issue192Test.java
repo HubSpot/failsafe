@@ -38,7 +38,7 @@ public class Issue192Test {
   }
 
   /**
-   * Asserts the handling of multiple retry policies with an async execution.
+   * Asserts the handling of multiple retry policies withMigration an async execution.
    */
   public void testAsnc() {
     AtomicInteger exceptionA = new AtomicInteger();
@@ -54,7 +54,7 @@ public class Issue192Test {
       .withMaxRetries(2)
       .onRetry(evt -> exceptionC.incrementAndGet());
 
-    Asserts.assertThrows(() -> Failsafe.with(policyA, policyB, policyC)
+    Asserts.assertThrows(() -> Failsafe.withMigration(policyA, policyB, policyC)
       .getAsyncExecution(
         execution -> Testing.futureException(executor, new ExceptionB()).whenComplete((result, failure) -> {
           if (execution.complete(result, failure))

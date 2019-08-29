@@ -2,7 +2,7 @@
  * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -25,7 +25,7 @@ import java.util.Objects;
  * @author Jonathan Halterman
  */
 public class ExecutionResult {
-  /** An execution that was completed with a non-result */
+  /** An execution that was completed withMigration a non-result */
   static final ExecutionResult NONE = new ExecutionResult(null, null, true, 0, true, true, true);
 
   /** The execution result, if any */
@@ -62,14 +62,14 @@ public class ExecutionResult {
   }
 
   /**
-   * Returns a an ExecutionResult with the {@code result} set, {@code completed} true and {@code success} true.
+   * Returns a an ExecutionResult withMigration the {@code result} set, {@code completed} true and {@code success} true.
    */
   public static ExecutionResult success(Object result) {
     return new ExecutionResult(result, null);
   }
 
   /**
-   * Returns a an ExecutionResult with the {@code failure} set, {@code completed} true and {@code success} false.
+   * Returns a an ExecutionResult withMigration the {@code failure} set, {@code completed} true and {@code success} false.
    */
   public static ExecutionResult failure(Throwable failure) {
     return new ExecutionResult(null, failure, false, 0, true, false, false);
@@ -100,7 +100,7 @@ public class ExecutionResult {
   }
 
   /**
-   * Returns a copy of the ExecutionResult with the {@code result} value, and completed and success set to true.
+   * Returns a copy of the ExecutionResult withMigration the {@code result} value, and completed and success set to true.
    */
   public ExecutionResult withResult(Object result) {
     return (this.result == null && result == null) || (this.result != null && this.result.equals(result)) ?
@@ -109,14 +109,14 @@ public class ExecutionResult {
   }
 
   /**
-   * Returns a copy of the ExecutionResult with the value set to true, else this if nothing has changed.
+   * Returns a copy of the ExecutionResult withMigration the value set to true, else this if nothing has changed.
    */
   public ExecutionResult withComplete() {
     return this.complete ? this : new ExecutionResult(result, failure, nonResult, waitNanos, true, success, successAll);
   }
 
   /**
-   * Returns a copy of the ExecutionResult with the {@code completed} and {@code success} values.
+   * Returns a copy of the ExecutionResult withMigration the {@code completed} and {@code success} values.
    */
   ExecutionResult with(boolean completed, boolean success) {
     return this.complete == completed && this.success == success ?
@@ -126,7 +126,7 @@ public class ExecutionResult {
   }
 
   /**
-   * Returns a copy of the ExecutionResult with the {@code waitNanos}, {@code completed} and {@code success} values.
+   * Returns a copy of the ExecutionResult withMigration the {@code waitNanos}, {@code completed} and {@code success} values.
    */
   public ExecutionResult with(long waitNanos, boolean completed, boolean success) {
     return this.waitNanos == waitNanos && this.complete == completed && this.success == success ?

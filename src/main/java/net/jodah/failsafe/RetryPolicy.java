@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -48,6 +48,7 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("WeakerAccess")
 public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
+  public static final RetryPolicy NEVER = new RetryPolicy().withMaxRetries(0);
   private static final int DEFAULT_MAX_RETRIES = 2;
 
   // Policy config
@@ -69,7 +70,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
   private EventListener retryListener;
 
   /**
-   * Creates a retry policy that allows 3 execution attempts max with no delay.
+   * Creates a retry policy that allows 3 execution attempts max withMigration no delay.
    */
   public RetryPolicy() {
     delay = Duration.ZERO;
@@ -104,6 +105,24 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     this.successListener = rp.successListener;
   }
 
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
+  @Deprecated
+  public RetryPolicy<R> retryOn(Class<? extends Throwable> failure) {
+    return handle(failure);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
+  @Deprecated
+  public final RetryPolicy<R> retryOn(Class<? extends Throwable>... failures) {
+    return handle(failures);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public RetryPolicy<R> retryIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
+
   /**
    * Specifies that retries should be aborted if the {@code completionPredicate} matches the completion result.
    *
@@ -116,6 +135,12 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     return this;
   }
 
+  // For migration from 1.x to 2.x
+  @Deprecated
+  public RetryPolicy<R> abortIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> completionPredicate) {
+    return abortIf(completionPredicate.toJavaUtil());
+  }
+
   /**
    * Specifies that retries should be aborted if the {@code resultPredicate} matches the result. Predicate is not
    * invoked when the operation fails.
@@ -126,6 +151,12 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     Assert.notNull(resultPredicate, "resultPredicate");
     abortConditions.add(resultPredicateFor(resultPredicate));
     return this;
+  }
+
+  // For migration from 1.x to 2.x
+  @Deprecated
+  public RetryPolicy<R> abortIf(net.jodah.failsafe.function.Predicate<R> resultPredicate) {
+    return abortIf(resultPredicate.toJavaUtil());
   }
 
   /**
@@ -177,6 +208,12 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     Assert.notNull(failurePredicate, "failurePredicate");
     abortConditions.add(failurePredicateFor(failurePredicate));
     return this;
+  }
+
+  // For migration from 1.x to 2.x
+  @Deprecated
+  public <T extends Throwable> RetryPolicy<R> abortOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return abortOn(failurePredicate.toJavaUtil());
   }
 
   /**
@@ -432,6 +469,13 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
     return this;
   }
 
+  /* Backwards compatability for 1.x -> 2.x migration */
+  @Deprecated
+  public RetryPolicy<R> withDelay(long jitter, TimeUnit timeUnit) {
+    return withDelay(Duration.of(jitter, TimeUnitToChronoUnit.toChronoUnit(timeUnit)));
+  }
+
+
   /**
    * Sets a random delay between the {@code delayMin} and {@code delayMax} (inclusive) to occur between retries.
    *
@@ -463,7 +507,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
    * {@code 100} milliseconds and a {@code jitterFactor} of {@code .25} will result in a random retry delay between
    * {@code 75} and {@code 125} milliseconds.
    * <p>
-   * Jitter should be combined with {@link #withDelay(Duration) fixed}, {@link #withDelay(long, long, ChronoUnit)
+   * Jitter should be combined withMigration {@link #withDelay(Duration) fixed}, {@link #withDelay(long, long, ChronoUnit)
    * random} or {@link #withBackoff(long, long, ChronoUnit) exponential backoff} delays.
    *
    * @throws IllegalArgumentException if {@code jitterFactor} is < 0 or > 1
@@ -483,7 +527,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
    * jitter} will be added or subtracted to the delay. For example: a {@code jitter} of {@code 100} milliseconds will
    * randomly add between {@code -100} and {@code 100} milliseconds to each retry delay.
    * <p>
-   * Jitter should be combined with {@link #withDelay(Duration) fixed}, {@link #withDelay(long, long, ChronoUnit)
+   * Jitter should be combined withMigration {@link #withDelay(Duration) fixed}, {@link #withDelay(long, long, ChronoUnit)
    * random} or {@link #withBackoff(long, long, ChronoUnit) exponential backoff} delays.
    *
    * @throws NullPointerException if {@code jitter} is null

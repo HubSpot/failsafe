@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -34,6 +34,347 @@ final class Functions {
     void set(T value);
   }
 
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static abstract class AsyncCallableWrapper<T> implements Callable<T> {
+    protected AsyncExecutionOld execution;
+
+    void inject(AsyncExecutionOld execution) {
+      this.execution = execution;
+    }
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static abstract class ContextualCallableWrapper<T> implements Callable<T> {
+    protected ExecutionContextOld context;
+
+    void inject(ExecutionContextOld context) {
+      this.context = context;
+    }
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOf(final AsyncCallable<T> callable) {
+    Assert.notNull(callable, "callable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public synchronized T call() throws Exception {
+        try {
+          execution.before();
+          T result = callable.call(execution);
+          return result;
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+          return null;
+        }
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOf(final AsyncRunnableOld runnable) {
+    Assert.notNull(runnable, "runnable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public synchronized T call() throws Exception {
+        try {
+          execution.before();
+          runnable.run(execution);
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+        }
+
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOf(final Callable<T> callable) {
+    Assert.notNull(callable, "callable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        try {
+          execution.before();
+          T result = callable.call();
+          execution.completeOrRetry(result, null);
+          return result;
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+          return null;
+        }
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOf(final CheckedRunnable runnable) {
+    Assert.notNull(runnable, "runnable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        try {
+          execution.before();
+          runnable.run();
+          execution.completeOrRetry(null, null);
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+        }
+
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOf(final ContextualCallable<T> callable) {
+    Assert.notNull(callable, "callable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        try {
+          execution.before();
+          T result = callable.call(execution);
+          execution.completeOrRetry(result, null);
+          return result;
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+          return null;
+        }
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOf(final ContextualRunnableOld runnable) {
+    Assert.notNull(runnable, "runnable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        try {
+          execution.before();
+          runnable.run(execution);
+          execution.completeOrRetry(null, null);
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+        }
+
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOfFuture(
+      final AsyncCallable<? extends java.util.concurrent.CompletionStage<T>> callable) {
+    Assert.notNull(callable, "callable");
+    return new AsyncCallableWrapper<T>() {
+      Semaphore asyncFutureLock = new Semaphore(1);
+
+      @Override
+      public T call() throws Exception {
+        try {
+          execution.before();
+          asyncFutureLock.acquire();
+          callable.call(execution).whenComplete(new java.util.function.BiConsumer<T, Throwable>() {
+            @Override
+            public void accept(T innerResult, Throwable failure) {
+              try {
+                if (failure != null)
+                  execution.completeOrRetry(innerResult,
+                      failure instanceof java.util.concurrent.CompletionException ? failure.getCause() : failure);
+              } finally {
+                asyncFutureLock.release();
+              }
+            }
+          });
+        } catch (Throwable e) {
+          try {
+            execution.completeOrRetry(null, e);
+          } finally {
+            asyncFutureLock.release();
+          }
+        }
+
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOfFuture(final Callable<? extends java.util.concurrent.CompletionStage<T>> callable) {
+    Assert.notNull(callable, "callable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        try {
+          execution.before();
+          callable.call().whenComplete(new java.util.function.BiConsumer<T, Throwable>() {
+            @Override
+            public void accept(T innerResult, Throwable failure) {
+              // Unwrap CompletionException cause
+              if (failure != null && failure instanceof java.util.concurrent.CompletionException)
+                failure = failure.getCause();
+              execution.completeOrRetry(innerResult, failure);
+            }
+          });
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+        }
+
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> AsyncCallableWrapper<T> asyncOfFuture(
+      final ContextualCallable<? extends java.util.concurrent.CompletionStage<T>> callable) {
+    Assert.notNull(callable, "callable");
+    return new AsyncCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        try {
+          execution.before();
+          callable.call(execution).whenComplete(new java.util.function.BiConsumer<T, Throwable>() {
+            @Override
+            public void accept(T innerResult, Throwable failure) {
+              // Unwrap CompletionException cause
+              if (failure != null && failure instanceof java.util.concurrent.CompletionException)
+                failure = failure.getCause();
+              execution.completeOrRetry(innerResult, failure);
+            }
+          });
+        } catch (Throwable e) {
+          execution.completeOrRetry(null, e);
+        }
+
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T, U, R> CheckedBiFunction<T, U, R> fnOf(final Callable<R> callable) {
+    return new CheckedBiFunction<T, U, R>() {
+      @Override
+      public R apply(T t, U u) throws Exception {
+        return callable.call();
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T, U, R> CheckedBiFunction<T, U, R> fnOf(final CheckedBiConsumer<T, U> consumer) {
+    return new CheckedBiFunction<T, U, R>() {
+      @Override
+      public R apply(T t, U u) throws Exception {
+        consumer.accept(t, u);
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T, U, R> CheckedBiFunction<T, U, R> fnOf(final CheckedConsumer<U> consumer) {
+    return new CheckedBiFunction<T, U, R>() {
+      @Override
+      public R apply(T t, U u) throws Exception {
+        consumer.accept(u);
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T, U, R> CheckedBiFunction<T, U, R> fnOf(final CheckedFunction<U, R> function) {
+    return new CheckedBiFunction<T, U, R>() {
+      @Override
+      public R apply(T t, U u) throws Exception {
+        return function.apply(u);
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T, U, R> CheckedBiFunction<T, U, R> fnOf(final CheckedRunnable runnable) {
+    return new CheckedBiFunction<T, U, R>() {
+      @Override
+      public R apply(T t, U u) throws Exception {
+        runnable.run();
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T, U, R> CheckedBiFunction<T, U, R> fnOf(final R result) {
+    return new CheckedBiFunction<T, U, R>() {
+      @Override
+      public R apply(T t, U u) throws Exception {
+        return result;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> Callable<T> callableOf(final CheckedRunnable runnable) {
+    Assert.notNull(runnable, "runnable");
+    return new Callable<T>() {
+      @Override
+      public T call() throws Exception {
+        runnable.run();
+        return null;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> Callable<T> callableOf(final ContextualCallable<T> callable) {
+    Assert.notNull(callable, "callable");
+    return new ContextualCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        T result = callable.call(context);
+        return result;
+      }
+    };
+  }
+
+  // For migration from 1.x to 2.x. This is used by SyncFailsafe/AsyncFailsafe and will be replaced by using FailsafeExecutor
+  @Deprecated
+  static <T> Callable<T> callableOf(final ContextualRunnableOld runnable) {
+    Assert.notNull(runnable, "runnable");
+    return new ContextualCallableWrapper<T>() {
+      @Override
+      public T call() throws Exception {
+        runnable.run(context);
+        return null;
+      }
+    };
+  }
+
+
+
   /**
    * Returns a Supplier that pre-executes the {@code execution}, applies the {@code supplier}, records the result and
    * returns the result. This implementation also handles Thread interrupts.
@@ -49,7 +390,7 @@ final class Functions {
         throwable = t;
         result = ExecutionResult.failure(t);
       } finally {
-        // Guard against race with Timeout interruption
+        // Guard against race withMigration Timeout interruption
         synchronized (execution) {
           execution.canInterrupt = false;
           if (execution.interrupted)

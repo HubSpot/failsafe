@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 public class Issue131Test {
 
   /**
-   * This predicate is invoked in failure scenarios with an arg of null,
+   * This predicate is invoked in failure scenarios withMigration an arg of null,
    * producing a {@link NullPointerException} yielding surpising results.
    */
   private static Predicate<String> handleIfEqualsIgnoreCaseFoo = s -> {
@@ -45,7 +45,7 @@ public class Issue131Test {
   @Test(expectedExceptions = FailsafeException.class)
   public void syncShouldThrowTheUnderlyingIOException() {
     CircuitBreaker<String> circuitBreaker = new CircuitBreaker<String>().handleResultIf(handleIfEqualsIgnoreCaseFoo);
-    FailsafeExecutor<String> failsafe = Failsafe.with(circuitBreaker);
+    FailsafeExecutor<String> failsafe = Failsafe.withMigration(circuitBreaker);
 
     // I expect this getAsync() to throw IOException, not NPE.
     failsafe.get(() -> {
@@ -60,7 +60,7 @@ public class Issue131Test {
    */
   public void asyncShouldCompleteTheFuture() throws Throwable {
     CircuitBreaker<String> circuitBreaker = new CircuitBreaker<String>().handleResultIf(handleIfEqualsIgnoreCaseFoo);
-    FailsafeExecutor<String> failsafe = Failsafe.with(circuitBreaker).with(Executors.newSingleThreadScheduledExecutor());
+    FailsafeExecutor<String> failsafe = Failsafe.withMigration(circuitBreaker).with(Executors.newSingleThreadScheduledExecutor());
 
     Waiter waiter = new Waiter();
 

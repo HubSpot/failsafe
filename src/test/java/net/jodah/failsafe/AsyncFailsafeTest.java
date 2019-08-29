@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -61,7 +61,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     AtomicInteger expectedExecutions = new AtomicInteger(3);
 
     // When / Then
-    Future<?> future = runAsync(Failsafe.with(retryAlways).with(executor).onComplete(e -> {
+    Future<?> future = runAsync(Failsafe.withMigration(retryAlways).with(executor).onComplete(e -> {
       waiter.assertEquals(expectedExecutions.get(), e.getAttemptCount());
       waiter.assertNull(e.getResult());
       waiter.assertNull(e.getFailure());
@@ -77,7 +77,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenThrow(failures(10, new ConnectException()));
 
     // When
-    Future<?> future2 = runAsync(Failsafe.with(retryTwice).with(executor).onComplete(e -> {
+    Future<?> future2 = runAsync(Failsafe.withMigration(retryTwice).with(executor).onComplete(e -> {
       waiter.assertEquals(expectedExecutions.get(), e.getAttemptCount());
       waiter.assertNull(e.getResult());
       waiter.assertTrue(e.getFailure() instanceof ConnectException);
@@ -123,7 +123,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     AtomicInteger expectedExecutions = new AtomicInteger(5);
 
     // When / Then
-    Future<Boolean> future = getAsync(Failsafe.with(retryPolicy).with(executor).onComplete(e -> {
+    Future<Boolean> future = getAsync(Failsafe.withMigration(retryPolicy).with(executor).onComplete(e -> {
       waiter.assertEquals(expectedExecutions.get(), e.getAttemptCount());
       waiter.assertTrue(e.getResult());
       waiter.assertNull(e.getFailure());
@@ -141,7 +141,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     expectedExecutions.set(3);
 
     // When / Then
-    Future<Boolean> future2 = getAsync(Failsafe.with(retryTwice).with(executor).onComplete(e -> {
+    Future<Boolean> future2 = getAsync(Failsafe.withMigration(retryTwice).with(executor).onComplete(e -> {
       waiter.assertEquals(expectedExecutions.get(), e.getAttemptCount());
       waiter.assertNull(e.getResult());
       waiter.assertTrue(e.getFailure() instanceof ConnectException);
@@ -187,7 +187,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     RetryPolicy<Boolean> retryPolicy = new RetryPolicy<Boolean>().handleResult(false).withMaxAttempts(10);
 
     // When
-    CompletableFuture<Boolean> future = getStageAsync(Failsafe.with(retryPolicy).with(executor), supplier);
+    CompletableFuture<Boolean> future = getStageAsync(Failsafe.withMigration(retryPolicy).with(executor), supplier);
 
     // Then
     future.whenComplete((result, failure) -> {
@@ -204,7 +204,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     when(service.connect()).thenThrow(failures(10, new ConnectException()));
 
     // When
-    CompletableFuture<Boolean> future2 = getStageAsync(Failsafe.with(retryTwice).with(executor), supplier);
+    CompletableFuture<Boolean> future2 = getStageAsync(Failsafe.withMigration(retryTwice).with(executor), supplier);
 
     // Then
     future2.whenComplete((result, failure) -> {
@@ -248,7 +248,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
    */
   public void shouldCompleteFutureExternally() throws Throwable {
     // Given
-    CompletableFuture<Boolean> future1 = Failsafe.with(retryNever).onSuccess(e -> {
+    CompletableFuture<Boolean> future1 = Failsafe.withMigration(retryNever).onSuccess(e -> {
       waiter.assertFalse(e.getResult());
       waiter.resume();
     }).getAsync(() -> {
@@ -266,7 +266,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     waiter.await(1000);
 
     // Given
-    CompletableFuture<Boolean> future2 = Failsafe.with(retryNever).onFailure(e -> {
+    CompletableFuture<Boolean> future2 = Failsafe.withMigration(retryNever).onFailure(e -> {
       waiter.assertTrue(e.getFailure() instanceof IllegalArgumentException);
       waiter.resume();
     }).getAsync(() -> {
@@ -285,7 +285,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
   }
 
   /**
-   * Tests a scenario where three timeouts should cause all delegates to be cancelled with interrupts.
+   * Tests a scenario where three timeouts should cause all delegates to be cancelled withMigration interrupts.
    */
   public void shouldCancelNestedTimeoutsWithInterupt() throws Throwable {
     // Given
@@ -296,7 +296,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     CountDownLatch futureLatch = new CountDownLatch(1);
 
     // When
-    FailsafeFuture<Boolean> future = (FailsafeFuture<Boolean>) Failsafe.with(rp, timeout2, timeout1).onComplete(e -> {
+    FailsafeFuture<Boolean> future = (FailsafeFuture<Boolean>) Failsafe.withMigration(rp, timeout2, timeout1).onComplete(e -> {
       waiter.assertNull(e.getResult());
       waiter.assertTrue(e.getFailure() instanceof TimeoutExceededException);
       waiter.resume();
@@ -338,7 +338,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     throws Throwable {
     // Given
     FailsafeFuture<?> future = (FailsafeFuture<?>) executorCallable.apply(
-      Failsafe.with(policy).with(executor).onComplete(e -> {
+      Failsafe.withMigration(policy).with(executor).onComplete(e -> {
         waiter.assertNull(e.getResult());
         waiter.assertTrue(e.getFailure() instanceof CancellationException);
         waiter.resume();
@@ -417,7 +417,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
   }
 
   public void shouldManuallyRetryAndComplete() throws Throwable {
-    Failsafe.with(retryAlways).with(executor).onComplete(e -> {
+    Failsafe.withMigration(retryAlways).with(executor).onComplete(e -> {
       waiter.assertTrue(e.getResult());
       waiter.assertNull(e.getFailure());
       waiter.resume();
@@ -435,15 +435,15 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
    * Assert handles a supplier that throws instead of returning a future.
    */
   public void shouldHandleThrowingGetStageAsync() {
-    assertThrows(() -> Failsafe.with(retryTwice).getStageAsync(() -> {
+    assertThrows(() -> Failsafe.withMigration(retryTwice).getStageAsync(() -> {
       throw new IllegalArgumentException();
     }).get(), ExecutionException.class, IllegalArgumentException.class);
 
-    assertThrows(() -> Failsafe.with(retryTwice).getStageAsync(context -> {
+    assertThrows(() -> Failsafe.withMigration(retryTwice).getStageAsync(context -> {
       throw new IllegalArgumentException();
     }).get(), ExecutionException.class, IllegalArgumentException.class);
 
-    assertThrows(() -> Failsafe.with(retryTwice).getStageAsyncExecution(exec -> {
+    assertThrows(() -> Failsafe.withMigration(retryTwice).getStageAsyncExecution(exec -> {
       throw new IllegalArgumentException();
     }).get(), ExecutionException.class, IllegalArgumentException.class);
   }
@@ -454,13 +454,13 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
   public void shouldHandleCompletedExceptionallyGetStageAsync() {
     CompletableFuture<Boolean> failedFuture = new CompletableFuture<>();
     failedFuture.completeExceptionally(new IllegalArgumentException());
-    assertThrows(() -> Failsafe.with(retryTwice).getStageAsync(() -> failedFuture).get(), ExecutionException.class,
+    assertThrows(() -> Failsafe.withMigration(retryTwice).getStageAsync(() -> failedFuture).get(), ExecutionException.class,
       IllegalArgumentException.class);
 
-    assertThrows(() -> Failsafe.with(retryTwice).getStageAsync(context -> failedFuture).get(), ExecutionException.class,
+    assertThrows(() -> Failsafe.withMigration(retryTwice).getStageAsync(context -> failedFuture).get(), ExecutionException.class,
       IllegalArgumentException.class);
 
-    assertThrows(() -> Failsafe.with(retryTwice).getStageAsyncExecution(exec -> failedFuture).get(),
+    assertThrows(() -> Failsafe.withMigration(retryTwice).getStageAsyncExecution(exec -> failedFuture).get(),
       ExecutionException.class, IllegalArgumentException.class);
   }
 
@@ -468,7 +468,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
    * Asserts that asynchronous completion via an execution is supported.
    */
   public void shouldCompleteAsync() throws Throwable {
-    Failsafe.with(retryAlways).runAsyncExecution(exec -> executor.schedule(() -> {
+    Failsafe.withMigration(retryAlways).runAsyncExecution(exec -> executor.schedule(() -> {
       try {
         exec.complete();
         waiter.resume();
@@ -486,7 +486,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     Timeout<Object> timeout = Timeout.of(Duration.ofMillis(1));
 
     // When / Then
-    Failsafe.with(rp, timeout).onComplete(e -> {
+    Failsafe.withMigration(rp, timeout).onComplete(e -> {
       assertNull(e.getResult());
       assertTrue(e.getFailure() instanceof TimeoutExceededException);
       waiter.resume();
@@ -506,7 +506,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     assertTrue(breaker.isClosed());
 
     // When
-    Failsafe.with(breaker, timeout).with(executor).runAsyncExecution(exec -> {
+    Failsafe.withMigration(breaker, timeout).with(executor).runAsyncExecution(exec -> {
       Thread.sleep(100);
       exec.complete();
       waiter.resume();
@@ -524,7 +524,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     AtomicBoolean executed = new AtomicBoolean();
 
     // When
-    Future future = Failsafe.with(breaker).with(executor).runAsync(() -> executed.set(true));
+    Future future = Failsafe.withMigration(breaker).with(executor).runAsync(() -> executed.set(true));
 
     // Then
     assertFalse(executed.get());
@@ -540,7 +540,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     executor.shutdownNow();
 
     // When
-    Future future = Failsafe.with(Fallback.of(false), new RetryPolicy<>(), new CircuitBreaker<>())
+    Future future = Failsafe.withMigration(Fallback.of(false), new RetryPolicy<>(), new CircuitBreaker<>())
       .with(executor)
       .runAsync(() -> waiter.fail("Should not execute supplier since executor has been shutdown"));
 
@@ -556,7 +556,7 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
     AtomicInteger counter = new AtomicInteger();
 
     // When
-    Future future = Failsafe.with(new RetryPolicy<>().handleResult(null).handle(Exception.class))
+    Future future = Failsafe.withMigration(new RetryPolicy<>().handleResult(null).handle(Exception.class))
       .with(executor)
       .getAsync(() -> {
         counter.incrementAndGet();
@@ -586,22 +586,22 @@ public class AsyncFailsafeTest extends AbstractFailsafeTest {
   }
 
   public void shouldInterruptExecutionOnCancelWithForkJoinPool() throws Throwable {
-    assertInterruptedExceptionOnCancel(Failsafe.with(retryAlways));
+    assertInterruptedExceptionOnCancel(Failsafe.withMigration(retryAlways));
   }
 
   public void shouldInterruptExecutionOnCancelWithScheduledExecutorService() throws Throwable {
-    assertInterruptedExceptionOnCancel(Failsafe.with(retryAlways).with(executor));
+    assertInterruptedExceptionOnCancel(Failsafe.withMigration(retryAlways).with(executor));
   }
 
   public void shouldInterruptExecutionOnCancelWithExecutorService() throws Throwable {
     ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    assertInterruptedExceptionOnCancel(Failsafe.with(retryAlways).with(executorService));
+    assertInterruptedExceptionOnCancel(Failsafe.withMigration(retryAlways).with(executorService));
   }
 
   @SuppressWarnings("unused")
   public void shouldSupportCovariance() {
     FastService fastService = mock(FastService.class);
-    CompletionStage<Service> stage = Failsafe.with(new RetryPolicy<Service>())
+    CompletionStage<Service> stage = Failsafe.withMigration(new RetryPolicy<Service>())
       .with(executor)
       .getAsync(() -> fastService);
   }

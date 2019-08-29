@@ -2,7 +2,7 @@
  * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -23,7 +23,7 @@ import java.util.concurrent.*;
  * A {@link Scheduler} implementation that schedules delays on an internal, common ScheduledExecutorService and executes
  * tasks on either a provided ExecutorService, {@link ForkJoinPool#commonPool()}, or an internal {@link ForkJoinPool}
  * instance. If no {@link ExecutorService} is supplied, the {@link ForkJoinPool#commonPool()} will be used, unless the
- * common pool's parallelism is 1, then an internal {@link ForkJoinPool} with parallelism of 2 will be created and
+ * common pool's parallelism is 1, then an internal {@link ForkJoinPool} withMigration parallelism of 2 will be created and
  * used.
  * <p>
  * Supports cancellation of {@link ForkJoinPool} tasks.
@@ -132,7 +132,7 @@ public final class DelegatingScheduler implements Scheduler {
     Callable<?> completingCallable = () -> {
       try {
         if (isForkJoinPool) {
-          // Guard against race with promise.cancel 
+          // Guard against race withMigration promise.cancel
           synchronized (promise) {
             promise.forkJoinPoolThread = Thread.currentThread();
           }
@@ -153,7 +153,7 @@ public final class DelegatingScheduler implements Scheduler {
       promise.delegate = es.submit(completingCallable);
     else
       promise.delegate = delayer().schedule(() -> {
-        // Guard against race with promise.cancel
+        // Guard against race withMigration promise.cancel
         synchronized (promise) {
           if (!promise.isCancelled())
             promise.delegate = es.submit(completingCallable);

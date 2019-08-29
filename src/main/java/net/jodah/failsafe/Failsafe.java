@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -15,11 +15,10 @@
  */
 package net.jodah.failsafe;
 
-import net.jodah.failsafe.internal.util.Assert;
-
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import net.jodah.failsafe.internal.util.Assert;
 
 /**
  * Simple, sophisticated failure handling.
@@ -29,11 +28,11 @@ import java.util.List;
 public class Failsafe {
   /**
    * Creates and returns a new {@link FailsafeExecutor} instance that will handle failures according to the given {@code
-   * policies}. The {@code policies} are composed around an execution and will handle execution results in reverse, with
+   * policies}. The {@code policies} are composed around an execution and will handle execution results in reverse, withMigration
    * the last policy being applied first. For example, consider:
    * <p>
    * <pre>
-   *   Failsafe.with(fallback, retryPolicy, circuitBreaker).get(supplier);
+   *   Failsafe.withMigration(fallback, retryPolicy, circuitBreaker).get(supplier);
    * </pre>
    * </p>
    * This results in the following internal composition when executing the {@code supplier} and handling its result:
@@ -52,18 +51,29 @@ public class Failsafe {
    * @throws IllegalArgumentException if {@code policies} is empty
    */
   @SafeVarargs
-  public static <R, P extends Policy<R>> FailsafeExecutor<R> with(P... policies) {
+  // Changed to withMigration to move the method naming out of the way from existing 1.x usages of `with` that return the old execution model
+  public static <R, P extends Policy<R>> FailsafeExecutor<R> withMigration(P... policies) {
     Assert.notNull(policies, "policies");
     return new FailsafeExecutor<>(Arrays.asList(policies));
   }
 
+  // Migrate to `withMigration` which will eventually migrate back to `with` to convert from 1.x `SyncFailsafe` to 2.x `FailsafeExecutor`
+  @Deprecated
+  public static <R> SyncFailsafe<R> with(RetryPolicy<R> retryPolicy) {
+    return new SyncFailsafe<>(retryPolicy);
+  }
+
+  public static <R> SyncFailsafe<R> with(CircuitBreaker<R> circuitBreaker) {
+    return new SyncFailsafe<>(circuitBreaker);
+  }
+
   /**
    * Creates and returns a new {@link FailsafeExecutor} instance that will handle failures according to the given {@code
-   * policies}. The {@code policies} are composed around an execution and will handle execution results in reverse, with
+   * policies}. The {@code policies} are composed around an execution and will handle execution results in reverse, withMigration
    * the last policy being applied first. For example, consider:
    * <p>
    * <pre>
-   *   Failsafe.with(fallback, retryPolicy, circuitBreaker).get(supplier);
+   *   Failsafe.withMigration(fallback, retryPolicy, circuitBreaker).get(supplier);
    * </pre>
    * </p>
    * This results in the following internal composition when executing the {@code supplier} and handling its result:

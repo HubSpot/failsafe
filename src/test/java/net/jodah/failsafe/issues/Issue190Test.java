@@ -33,7 +33,7 @@ public class Issue190Test {
     AtomicInteger successEvents = new AtomicInteger();
     Waiter waiter = new Waiter();
 
-    Failsafe.with(policy).onFailure(e -> {
+    Failsafe.withMigration(policy).onFailure(e -> {
       failureEvents.incrementAndGet();
       waiter.resume();
     }).onSuccess(e -> {

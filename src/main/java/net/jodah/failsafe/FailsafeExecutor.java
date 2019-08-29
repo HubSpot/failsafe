@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -32,7 +32,7 @@ import static net.jodah.failsafe.Functions.*;
 /**
  * <p>
  * An executor that handles failures according to configured {@link FailurePolicy policies}. Can be created via {@link
- * Failsafe#with(Policy[])}.
+ * Failsafe#withMigration(Policy[])}.
  * <p>
  * Async executions are run by default on the {@link ForkJoinPool#commonPool()}. Alternative executors can be configured
  * via {@link #with(ScheduledExecutorService)} and similar methods. All async executions are cancellable via the
@@ -59,7 +59,7 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code supplier} until a successful result is returned or the configured policies are exceeded.
    *
    * @throws NullPointerException if the {@code supplier} is null
-   * @throws FailsafeException if the {@code supplier} fails with a checked Exception. {@link
+   * @throws FailsafeException if the {@code supplier} fails withMigration a checked Exception. {@link
    * FailsafeException#getCause()} can be used to learn the checked exception that caused the failure.
    * @throws TimeoutExceededException if a configured {@link Timeout} is exceeded.
    * @throws CircuitBreakerOpenException if a configured {@link CircuitBreaker} is open.
@@ -72,7 +72,7 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code supplier} until a successful result is returned or the configured policies are exceeded.
    *
    * @throws NullPointerException if the {@code supplier} is null
-   * @throws FailsafeException if the {@code supplier} fails with a checked Exception. {@link
+   * @throws FailsafeException if the {@code supplier} fails withMigration a checked Exception. {@link
    * FailsafeException#getCause()} can be used to learn the checked exception that caused the failure.
    * @throws TimeoutExceededException if a configured {@link Timeout} is exceeded.
    * @throws CircuitBreakerOpenException if a configured {@link CircuitBreaker} is open.
@@ -85,11 +85,11 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code supplier} asynchronously until a successful result is returned or the configured policies are
    * exceeded.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -104,11 +104,11 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code supplier} asynchronously until a successful result is returned or the configured policies are
    * exceeded.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -121,14 +121,14 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
 
   /**
    * Executes the {@code supplier} asynchronously until a successful result is returned or the configured policies are
-   * exceeded. This method is intended for integration with asynchronous code. Retries must be manually scheduled via
+   * exceeded. This method is intended for integration withMigration asynchronous code. Retries must be manually scheduled via
    * one of the {@code AsyncExecution.retry} methods.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -143,11 +143,11 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code supplier} asynchronously until the resulting future is successfully completed or the configured
    * policies are exceeded.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -162,11 +162,11 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code supplier} asynchronously until the resulting future is successfully completed or the configured
    * policies are exceeded.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -179,14 +179,14 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
 
   /**
    * Executes the {@code supplier} asynchronously until the resulting future is successfully completed or the configured
-   * policies are exceeded. This method is intended for integration with asynchronous code. Retries must be manually
+   * policies are exceeded. This method is intended for integration withMigration asynchronous code. Retries must be manually
    * scheduled via one of the {@code AsyncExecution.retry} methods.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -202,7 +202,7 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code runnable} until successful or until the configured policies are exceeded.
    *
    * @throws NullPointerException if the {@code runnable} is null
-   * @throws FailsafeException if the {@code runnable} fails with a checked Exception. {@link
+   * @throws FailsafeException if the {@code runnable} fails withMigration a checked Exception. {@link
    * FailsafeException#getCause()} can be used to learn the checked exception that caused the failure.
    * @throws TimeoutExceededException if a configured {@link Timeout} is exceeded.
    * @throws CircuitBreakerOpenException if a configured {@link CircuitBreaker} is open.
@@ -215,7 +215,7 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Executes the {@code runnable} until successful or until the configured policies are exceeded.
    *
    * @throws NullPointerException if the {@code runnable} is null
-   * @throws FailsafeException if the {@code runnable} fails with a checked Exception. {@link
+   * @throws FailsafeException if the {@code runnable} fails withMigration a checked Exception. {@link
    * FailsafeException#getCause()} can be used to learn the checked exception that caused the failure.
    * @throws TimeoutExceededException if a configured {@link Timeout} is exceeded.
    * @throws CircuitBreakerOpenException if a configured {@link CircuitBreaker} is open.
@@ -227,11 +227,11 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
   /**
    * Executes the {@code runnable} asynchronously until successful or until the configured policies are exceeded.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -245,11 +245,11 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
   /**
    * Executes the {@code runnable} asynchronously until successful or until the configured policies are exceeded.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -262,14 +262,14 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
 
   /**
    * Executes the {@code runnable} asynchronously until successful or until the configured policies are exceeded. This
-   * method is intended for integration with asynchronous code. Retries must be manually scheduled via one of the {@code
+   * method is intended for integration withMigration asynchronous code. Retries must be manually scheduled via one of the {@code
    * AsyncExecution.retry} methods.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *
@@ -364,7 +364,7 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
   /**
    * Calls the {@code supplier} synchronously, handling results according to the configured policies.
    *
-   * @throws FailsafeException if the {@code supplierFn} fails with a checked Exception or if interrupted while waiting
+   * @throws FailsafeException if the {@code supplierFn} fails withMigration a checked Exception or if interrupted while waiting
    * to perform a retry.
    * @throws TimeoutExceededException if a configured {@link Timeout} is exceeded.
    * @throws CircuitBreakerOpenException if a configured {@link CircuitBreaker} is open.
@@ -390,11 +390,11 @@ public class FailsafeExecutor<R> extends PolicyListeners<FailsafeExecutor<R>, R>
    * Calls the asynchronous {@code supplier} via the configured Scheduler, handling results according to the configured
    * policies.
    * <p>
-   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally with {@link
+   * If a configured {@link Timeout} is exceeded, the resulting future is completed exceptionally withMigration {@link
    * TimeoutExceededException}.
    * </p>
    * <p>
-   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally with {@link
+   * If a configured {@link CircuitBreaker} is open, the resulting future is completed exceptionally withMigration {@link
    * CircuitBreakerOpenException}.
    * </p>
    *

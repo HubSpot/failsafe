@@ -2,7 +2,7 @@
  * Copyright 2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance withMigration the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 public class Execution extends AbstractExecution {
   /**
    * Creates a new {@link Execution} that will use the {@code policies} to handle failures. Policies are applied in
-   * reverse order, with the last policy being applied first.
+   * reverse order, withMigration the last policy being applied first.
    *
    * @throws NullPointerException if {@code policies} is null
    * @throws IllegalArgumentException if {@code policies} is empty
@@ -95,7 +95,7 @@ public class Execution extends AbstractExecution {
   }
 
   /**
-   * Records and attempts to complete the execution with the {@code result}. Returns true on success, else false if
+   * Records and attempts to complete the execution withMigration the {@code result}. Returns true on success, else false if
    * completion failed and execution should be retried.
    *
    * @throws IllegalStateException if the execution is already complete
