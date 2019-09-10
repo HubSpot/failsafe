@@ -125,10 +125,21 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
+  public <T extends Throwable> RetryPolicy retryWhen(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
   public <T extends Throwable> RetryPolicy retryIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
     return handleIf(failurePredicate.toJavaUtil());
   }
 
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public RetryPolicy retryIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
 
   /**
    * Specifies that retries should be aborted if the {@code completionPredicate} matches the completion result.
