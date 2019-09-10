@@ -63,6 +63,8 @@ public class Failsafe {
     return new SyncFailsafe<>(retryPolicy);
   }
 
+  // Migrate to `withMigration` which will eventually migrate back to `with` to convert from 1.x `SyncFailsafe` to 2.x `FailsafeExecutor`
+  @Deprecated
   public static <R> SyncFailsafe<R> with(CircuitBreaker<R> circuitBreaker) {
     return new SyncFailsafe<>(circuitBreaker);
   }

@@ -107,21 +107,28 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
   @Deprecated
-  public RetryPolicy<R> retryOn(Class<? extends Throwable> failure) {
+  public <T extends Throwable> RetryPolicy retryOn(Class<T> failure) {
     return handle(failure);
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
   @Deprecated
-  public final RetryPolicy<R> retryOn(Class<? extends Throwable>... failures) {
+  public final <T extends Throwable> RetryPolicy retryOn(Class<T>... failures) {
     return handle(failures);
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public RetryPolicy<R> retryIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
+  public final <T extends Throwable> RetryPolicy retryOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
     return handleIf(failurePredicate.toJavaUtil());
   }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public <T extends Throwable> RetryPolicy retryIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
+
 
   /**
    * Specifies that retries should be aborted if the {@code completionPredicate} matches the completion result.
@@ -137,7 +144,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   // For migration from 1.x to 2.x
   @Deprecated
-  public RetryPolicy<R> abortIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> completionPredicate) {
+  public <T extends Throwable> RetryPolicy abortIf(net.jodah.failsafe.function.BiPredicate<R, T> completionPredicate) {
     return abortIf(completionPredicate.toJavaUtil());
   }
 
@@ -155,7 +162,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   // For migration from 1.x to 2.x
   @Deprecated
-  public RetryPolicy<R> abortIf(net.jodah.failsafe.function.Predicate<R> resultPredicate) {
+  public RetryPolicy abortIf(net.jodah.failsafe.function.Predicate<R> resultPredicate) {
     return abortIf(resultPredicate.toJavaUtil());
   }
 
@@ -212,7 +219,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   // For migration from 1.x to 2.x
   @Deprecated
-  public <T extends Throwable> RetryPolicy<R> abortOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+  public <T extends Throwable> RetryPolicy abortOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
     return abortOn(failurePredicate.toJavaUtil());
   }
 
@@ -413,13 +420,13 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration */
   @Deprecated
-  public RetryPolicy<R> withBackoff(long delay, long maxDelay, TimeUnit timeUnit) {
+  public RetryPolicy withBackoff(long delay, long maxDelay, TimeUnit timeUnit) {
     return withBackoff(delay, maxDelay, TimeUnitToChronoUnit.toChronoUnit(timeUnit), 2);
   }
 
   /* Backwards compatability for 1.x -> 2.x migration */
   @Deprecated
-  public RetryPolicy<R> withBackoff(long delay, long maxDelay, TimeUnit timeUnit, double delayFactor)  {
+  public RetryPolicy withBackoff(long delay, long maxDelay, TimeUnit timeUnit, double delayFactor)  {
     return withBackoff(delay, maxDelay, TimeUnitToChronoUnit.toChronoUnit(timeUnit), delayFactor);
   }
 
@@ -471,7 +478,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration */
   @Deprecated
-  public RetryPolicy<R> withDelay(long jitter, TimeUnit timeUnit) {
+  public RetryPolicy withDelay(long jitter, TimeUnit timeUnit) {
     return withDelay(Duration.of(jitter, TimeUnitToChronoUnit.toChronoUnit(timeUnit)));
   }
 
@@ -547,7 +554,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration */
   @Deprecated
-  public RetryPolicy<R> withJitter(long jitter, TimeUnit timeUnit) {
+  public RetryPolicy withJitter(long jitter, TimeUnit timeUnit) {
     return withJitter(Duration.of(jitter, TimeUnitToChronoUnit.toChronoUnit(timeUnit)));
   }
 
@@ -580,7 +587,7 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration */
   @Deprecated
-  public RetryPolicy<R> withMaxDuration(long maxDuration, TimeUnit timeUnit) {
+  public RetryPolicy withMaxDuration(long maxDuration, TimeUnit timeUnit) {
     return withMaxDuration(Duration.of(maxDuration, TimeUnitToChronoUnit.toChronoUnit(timeUnit)));
   }
 
