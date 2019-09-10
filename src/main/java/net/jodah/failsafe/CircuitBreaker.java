@@ -278,6 +278,18 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
+  public <T extends Throwable> CircuitBreaker failOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public <T extends Throwable> CircuitBreaker failWhen(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+    return handleIf(failurePredicate.toJavaUtil());
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
   public <T extends Throwable> CircuitBreaker failIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
     return handleIf(failurePredicate.toJavaUtil());
   }
