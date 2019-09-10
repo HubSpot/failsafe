@@ -266,25 +266,25 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
   @Deprecated
-  public CircuitBreaker<R> failOn(Class<? extends Throwable> failure) {
+  public <T extends Throwable> CircuitBreaker failOn(Class<T> failure) {
     return handle(failure);
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
   @Deprecated
-  public final CircuitBreaker<R> failOn(Class<? extends Throwable>... failures) {
+  public final <T extends Throwable> CircuitBreaker failOn(Class<T>... failures) {
     return handle(failures);
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public CircuitBreaker<R> failIf(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
+  public <T extends Throwable> CircuitBreaker failIf(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
     return handleIf(failurePredicate.toJavaUtil());
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public CircuitBreaker<R> failIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> resultPredicate) {
+  public <T extends Throwable> CircuitBreaker failIf(net.jodah.failsafe.function.BiPredicate<R, T> resultPredicate) {
     return handleIf(resultPredicate.toJavaUtil());
   }
 
