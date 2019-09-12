@@ -76,6 +76,12 @@ public class SyncFailsafeTest extends AbstractFailsafeTest {
     verify(service, times(3)).connect();
   }
 
+  // Using to assert usability of the old execution model during the migration. This usage was failing to conver from `Object` in the first attempted rollout
+  @Deprecated
+  public void shouldRunOldMethod() {
+    String x = Failsafe.with(new CircuitBreaker().withFailureThreshold(1)).get(() -> "testConversion");
+  }
+
   public void shouldRun() {
     assertRun((CheckedRunnable) () -> service.connect());
   }

@@ -17,6 +17,7 @@ package net.jodah.failsafe;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -266,26 +267,32 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
   @Deprecated
-  public <T extends Throwable> CircuitBreaker failOn(Class<T> failure) {
+  public CircuitBreaker failOn(Class<? extends Throwable> failure) {
     return handle(failure);
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
   @Deprecated
-  public final <T extends Throwable> CircuitBreaker failOn(Class<T>... failures) {
+  public CircuitBreaker failOn(Class<? extends Throwable>... failures) {
+    return handle(failures);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handle` */
+  @Deprecated
+  public CircuitBreaker failOn(List<Class<? extends Throwable>> failures) {
     return handle(failures);
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public <T extends Throwable> CircuitBreaker failOn(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
+  public CircuitBreaker failOn(net.jodah.failsafe.function.Predicate<? extends Throwable> failurePredicate) {
     return handleIf(failurePredicate.toJavaUtil());
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
-  public <T extends Throwable> CircuitBreaker failWhen(net.jodah.failsafe.function.Predicate<T> failurePredicate) {
-    return handleIf(failurePredicate.toJavaUtil());
+  public CircuitBreaker failWhen(R result) {
+    return handleIf(resultPredicateFor(result));
   }
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
