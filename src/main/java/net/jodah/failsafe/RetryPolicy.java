@@ -79,9 +79,11 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
   }
 
   /**
+   * @deprecated using this constructor will become unsupported in 2.3.1
    * Copy constructor.
    */
-  private RetryPolicy(RetryPolicy<R> rp) {
+  @Deprecated
+  public RetryPolicy(RetryPolicy<R> rp) {
     this.delay = rp.delay;
     this.delayMin = rp.delayMin;
     this.delayMax = rp.delayMax;
