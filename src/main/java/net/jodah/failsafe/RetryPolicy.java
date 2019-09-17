@@ -127,6 +127,12 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
+  public final RetryPolicy retryOn(Predicate<? extends Throwable> failurePredicate) {
+    return handleIf(failurePredicate);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
   public RetryPolicy retryOn(List<Class<? extends Throwable>> failures) {
     return handle(failures);
   }
@@ -145,8 +151,20 @@ public class RetryPolicy<R> extends DelayablePolicy<RetryPolicy<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
+  public <T extends Throwable> RetryPolicy retryIf(Predicate<T> failurePredicate) {
+    return handleIf(failurePredicate);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
   public RetryPolicy retryIf(net.jodah.failsafe.function.BiPredicate<R, ? extends Throwable> failurePredicate) {
     return handleIf(failurePredicate.toJavaUtil());
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public RetryPolicy retryIf(BiPredicate<R, ? extends Throwable> failurePredicate) {
+    return handleIf(failurePredicate);
   }
 
   /**

@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 import net.jodah.failsafe.function.CheckedRunnable;
 import net.jodah.failsafe.internal.CircuitBreakerInternals;
@@ -291,6 +293,12 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
+  public CircuitBreaker failOn(Predicate<? extends Throwable> failurePredicate) {
+    return handleIf(failurePredicate);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
   public CircuitBreaker failWhen(R result) {
     return handleIf(resultPredicateFor(result));
   }
@@ -303,9 +311,22 @@ public class CircuitBreaker<R> extends DelayablePolicy<CircuitBreaker<R>, R> {
 
   /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
   @Deprecated
+  public <T extends Throwable> CircuitBreaker failIf(Predicate<T> failurePredicate) {
+    return handleIf(failurePredicate);
+  }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
   public <T extends Throwable> CircuitBreaker failIf(net.jodah.failsafe.function.BiPredicate<R, T> resultPredicate) {
     return handleIf(resultPredicate.toJavaUtil());
   }
+
+  /* Backwards compatability for 1.x -> 2.x migration. Use `handleIf` */
+  @Deprecated
+  public <T extends Throwable> CircuitBreaker failIf(BiPredicate<R, T> resultPredicate) {
+    return handleIf(resultPredicate);
+  }
+
 
   /**
    * Opens the circuit.
