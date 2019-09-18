@@ -15,7 +15,6 @@
  */
 package net.jodah.hubspot.failsafe;
 
-import net.jodah.failsafe.function.*;
 import net.jodah.hubspot.failsafe.internal.util.Assert;
 import net.jodah.hubspot.failsafe.util.concurrent.Scheduler;
 import net.jodah.hubspot.failsafe.function.AsyncRunnable;

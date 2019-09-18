@@ -16,7 +16,6 @@
 package net.jodah.hubspot.failsafe;
 
 import net.jodah.hubspot.failsafe.function.CheckedRunnable;
-import net.jodah.failsafe.internal.*;
 import net.jodah.hubspot.failsafe.internal.util.Assert;
 import net.jodah.hubspot.failsafe.util.Ratio;
 import net.jodah.hubspot.failsafe.internal.CircuitBreakerInternals;

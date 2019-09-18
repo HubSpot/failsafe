@@ -16,7 +16,6 @@
 package net.jodah.hubspot.failsafe;
 
 import net.jodah.hubspot.failsafe.event.ExecutionCompletedEvent;
-import net.jodah.failsafe.function.*;
 import net.jodah.hubspot.failsafe.function.AsyncRunnable;
 import net.jodah.hubspot.failsafe.function.AsyncSupplier;
 import net.jodah.hubspot.failsafe.function.CheckedConsumer;

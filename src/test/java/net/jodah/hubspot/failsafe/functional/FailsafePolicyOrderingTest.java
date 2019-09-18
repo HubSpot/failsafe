@@ -1,7 +1,6 @@
 package net.jodah.hubspot.failsafe.functional;
 
 import net.jodah.concurrentunit.Waiter;
-import net.jodah.failsafe.*;
 import net.jodah.hubspot.failsafe.Asserts;
 import net.jodah.hubspot.failsafe.CircuitBreaker;
 import net.jodah.hubspot.failsafe.Failsafe;

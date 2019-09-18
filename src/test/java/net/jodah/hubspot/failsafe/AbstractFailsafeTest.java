@@ -20,7 +20,6 @@ import net.jodah.hubspot.failsafe.Testing.ConnectException;
 import net.jodah.hubspot.failsafe.Testing.Service;
 import net.jodah.hubspot.failsafe.event.ExecutionAttemptedEvent;
 import net.jodah.hubspot.failsafe.event.ExecutionCompletedEvent;
-import net.jodah.failsafe.function.*;
 import net.jodah.hubspot.failsafe.function.CheckedConsumer;
 import net.jodah.hubspot.failsafe.function.CheckedFunction;
 import net.jodah.hubspot.failsafe.function.CheckedRunnable;
