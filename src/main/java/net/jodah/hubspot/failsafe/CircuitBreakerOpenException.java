@@ -20,7 +20,7 @@ package net.jodah.hubspot.failsafe;
  *
  * @author Jonathan Halterman
  */
-public class CircuitBreakerOpenException extends FailsafeException {
+public class CircuitBreakerOpenException extends net.jodah.failsafe.CircuitBreakerOpenException {
   private static final long serialVersionUID = 1L;
 
   private final CircuitBreaker circuitBreaker;
