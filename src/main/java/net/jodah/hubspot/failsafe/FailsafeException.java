@@ -21,7 +21,7 @@ package net.jodah.hubspot.failsafe;
  *
  * @author Jonathan Halterman
  */
-public class FailsafeException extends RuntimeException {
+public class FailsafeException extends net.jodah.failsafe.FailsafeException {
   private static final long serialVersionUID = 1L;
 
   public FailsafeException() {
