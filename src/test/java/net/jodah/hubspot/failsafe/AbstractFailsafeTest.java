@@ -15,6 +15,22 @@
  */
 package net.jodah.hubspot.failsafe;
 
+import static net.jodah.hubspot.failsafe.Asserts.assertThrows;
+import static net.jodah.hubspot.failsafe.Testing.failures;
+import static net.jodah.hubspot.failsafe.Testing.unwrapExceptions;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import net.jodah.concurrentunit.Waiter;
 import net.jodah.hubspot.failsafe.Testing.ConnectException;
 import net.jodah.hubspot.failsafe.Testing.Service;
@@ -25,22 +41,6 @@ import net.jodah.hubspot.failsafe.function.CheckedFunction;
 import net.jodah.hubspot.failsafe.function.CheckedRunnable;
 import net.jodah.hubspot.failsafe.function.CheckedSupplier;
 import net.jodah.hubspot.failsafe.function.ContextualSupplier;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static net.jodah.hubspot.failsafe.Asserts.assertThrows;
-import static net.jodah.hubspot.failsafe.Testing.failures;
-import static net.jodah.hubspot.failsafe.Testing.unwrapExceptions;
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 
 @Test
 public abstract class AbstractFailsafeTest {
@@ -157,11 +157,11 @@ public abstract class AbstractFailsafeTest {
     for (int i = 0; i < 3; i++)
       Testing.runInThread(() -> failsafeRun(breaker, () -> {
         waiter.resume();
-        Thread.sleep(1000);
+        Thread.sleep(10000);
       }));
 
     // When / Then
-    waiter.await(10000, 3);
+    waiter.await(10000, 1);
     for (int i = 0; i < 5; i++)
       assertThrows(() -> failsafeGet(breaker, () -> null), CircuitBreakerOpenException.class);
   }
