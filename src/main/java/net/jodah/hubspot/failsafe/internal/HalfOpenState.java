@@ -22,6 +22,7 @@ import net.jodah.hubspot.failsafe.internal.util.CircularBitSet;
 import net.jodah.hubspot.failsafe.util.Ratio;
 
 public class HalfOpenState extends CircuitState {
+  private static final int MAX_EXECUTIONS_IN_HALF_OPEN = 1;
   private final CircuitBreaker breaker;
   private final CircuitBreakerInternals internals;
 
@@ -35,7 +36,7 @@ public class HalfOpenState extends CircuitState {
 
   @Override
   public boolean allowsExecution() {
-    return internals.getCurrentExecutions() < maxConcurrentExecutions();
+    return internals.getCurrentExecutions() < MAX_EXECUTIONS_IN_HALF_OPEN;
   }
 
   @Override
@@ -102,17 +103,5 @@ public class HalfOpenState extends CircuitState {
       else
         breaker.open();
     }
-  }
-
-  /**
-   * Returns the max allowed concurrent executions.
-   */
-  int maxConcurrentExecutions() {
-    if (breaker.getSuccessThreshold() != null)
-      return breaker.getSuccessThreshold().getDenominator();
-    else if (breaker.getFailureThreshold() != null)
-      return breaker.getFailureThreshold().getDenominator();
-    else
-      return 1;
   }
 }
